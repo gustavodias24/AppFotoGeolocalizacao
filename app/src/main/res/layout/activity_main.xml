@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/logo_img"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@raw/logo"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Nome do operador para aparecer na foto:"
+        android:textColor="#686767" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/contorno"
+        android:ems="10"
+        android:hint="Nome do operador."
+        android:inputType="text"
+        android:padding="16dp" />
+
+    <Button
+        android:id="@+id/camera_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_vertical"
+        android:layout_marginTop="16dp"
+        android:drawableRight="@drawable/baseline_add_a_photo_24"
+        android:gravity="center|center_vertical"
+        android:rotationX="-4"
+        android:text="tirar foto"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/logo_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_vertical"
+        android:layout_marginTop="16dp"
+        android:drawableRight="@drawable/baseline_insert_photo_24"
+        android:gravity="center|center_vertical"
+        android:rotationX="-4"
+        android:text="Escolher logo"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/tutorial_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_vertical"
+        android:layout_marginTop="4dp"
+        android:drawableRight="@drawable/baseline_live_help_24"
+        android:gravity="center|center_vertical"
+        android:rotationX="-4"
+        android:text="tutorial"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
