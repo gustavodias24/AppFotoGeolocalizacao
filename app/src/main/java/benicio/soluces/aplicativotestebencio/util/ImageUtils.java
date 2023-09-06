@@ -1,4 +1,4 @@
-package benicio.soluces.aplicativotestebencio;
+package benicio.soluces.aplicativotestebencio.util;
 
 import android.content.Context;
 import android.net.Uri;

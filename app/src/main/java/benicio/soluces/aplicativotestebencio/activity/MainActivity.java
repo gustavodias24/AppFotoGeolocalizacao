@@ -1,5 +1,6 @@
-package benicio.soluces.aplicativotestebencio;
+package benicio.soluces.aplicativotestebencio.activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -16,15 +17,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.view.MenuItem;
 import android.view.View;
 
-import com.squareup.picasso.Picasso;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMainBinding;
+import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,6 +64,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         verificarPermissoes();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if ( item.getItemId() == android.R.id.home){
+            startActivity(new Intent(getApplicationContext(), MapaActivity.class));
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -96,4 +105,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 }

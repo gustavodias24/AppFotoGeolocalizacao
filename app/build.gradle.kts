@@ -31,7 +31,8 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.gms:play-services-location:18.0.0")
+    implementation("com.github.clans:fab:1.6.4")
+    implementation("org.osmdroid:osmdroid-android:6.1.6")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.appcompat:appcompat:1.6.1")
