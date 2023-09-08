@@ -1,40 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    >
+<LinearLayout
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     tools:context=".activity.MainActivity">
 
-    <ImageView
-        android:id="@+id/logo_img"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@raw/logo"
-        android:visibility="gone" />
-
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="Nome do operador para aparecer na foto:"
-        android:textColor="#686767" />
-
-    <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/contorno"
-        android:ems="10"
-        android:hint="Nome do operador."
-        android:inputType="text"
-        android:padding="16dp" />
+        android:layout_marginTop="8dp"
+        android:text="Fotos:"
+        android:textColor="#686767" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_fotos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nome_operador_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome do operador"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/obs_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Observações"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:lines="2"
+            android:maxLines="2"
+            android:minLines="2" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/camera_btn"
@@ -56,17 +82,23 @@
         android:id="@+id/logo_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|center_vertical"
+        android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/botao"
         android:drawableRight="@drawable/baseline_insert_photo_24"
-        android:gravity="center|center_vertical"
         android:rotationX="-4"
         android:text="Escolher logo"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/logo_img"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:src="@raw/logo"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/tutorial_btn"
@@ -84,4 +116,4 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-</LinearLayout>
+</LinearLayout></ScrollView>

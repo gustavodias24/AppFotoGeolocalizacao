@@ -32,6 +32,7 @@ android {
 
 dependencies {
     implementation("com.github.clans:fab:1.6.4")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.osmdroid:osmdroid-android:6.1.6")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.squareup.picasso:picasso:2.8")

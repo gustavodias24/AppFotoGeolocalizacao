@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
@@ -20,10 +23,18 @@ import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import benicio.soluces.aplicativotestebencio.adapter.AdapterFotos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMainBinding;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    private List<Uri> listaDeFotos = new ArrayList<>();
+    private AdapterFotos adapterFotos;
+    private RecyclerView recyclerFotos;
 
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
@@ -46,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
             Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
             binding.logoImg.setImageBitmap(decodedBitmap);
         }
-
         binding.cameraBtn.setOnClickListener( fotoView -> {
             Intent i  = new Intent(getApplicationContext(), ExibirActivity.class);
-            i.putExtra("operador", binding.editTextText.getText().toString());
+            i.putExtra("operador", binding.nomeOperadorField.getEditText().getText().toString());
+            i.putExtra("obs", binding.obsField.getEditText().getText().toString());
             i.putExtra("tipo", 0);
             startActivity(i);
         });
@@ -64,9 +75,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
         verificarPermissoes();
+        criarRecyclerFotos();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        listaDeFotos.clear();
+        for ( String imageString : ImageUtils.loadList(getApplicationContext())){
+            listaDeFotos.add(Uri.parse(imageString));
+        }
+        adapterFotos.notifyDataSetChanged();
     }
 
     @Override
@@ -86,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("logoImage", ImageUtils.imageToBase64(selectedImageUri, getApplicationContext()));
             editor.apply();
 
+
             binding.logoImg.setVisibility(View.VISIBLE);
             byte[] decodedBytes = Base64.decode(preferences.getString("logoImage", null), Base64.DEFAULT);
             Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
@@ -104,6 +131,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+    }
+
+    public void criarRecyclerFotos(){
+        recyclerFotos = binding.recyclerFotos;
+        recyclerFotos.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerFotos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
+        recyclerFotos.setHasFixedSize(true);
+        adapterFotos = new AdapterFotos(listaDeFotos, getApplicationContext(), MainActivity.this);
+        recyclerFotos.setAdapter(adapterFotos);
     }
 
 }

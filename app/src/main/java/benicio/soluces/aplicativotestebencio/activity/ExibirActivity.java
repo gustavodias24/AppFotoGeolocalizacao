@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -25,33 +26,42 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.UUID;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityExibirBinding;
+import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 
 public class ExibirActivity extends AppCompatActivity implements LocationListener {
 
     private Intent i;
     private static final int PERMISSON_CODE = 1000;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_WRITE_STORAGE = 2;
+    private ConstraintLayout rootView;
 
     private Dialog dialog_foto;
     private Uri imageUri;
@@ -61,6 +71,7 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
     private static final int PERMISSIONS_REQUEST_LOCATION = 2;
     private FusedLocationProviderClient fusedLocationClient;
     private SharedPreferences preferences;
+
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,18 +80,20 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
         setContentView(binding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+        rootView = binding.layoutRootPica;
         i = getIntent();
 
         preferences = getSharedPreferences("logoPreferences", Context.MODE_PRIVATE);
 
         if ( preferences.getString("logoImage", null) == null){
+            binding.logo.setVisibility(View.GONE);
             Picasso.get().load(R.raw.logo).into(binding.logo);
         }else{
+            binding.logo.setVisibility(View.VISIBLE);
             byte[] decodedBytes = Base64.decode(preferences.getString("logoImage", null), Base64.DEFAULT);
             Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
             binding.logo.setImageBitmap(decodedBitmap);
         }
-        Picasso.get().load(R.raw.mpasicon).into(binding.mapsicon);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -107,22 +120,54 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
             dialog_foto.show();
         });
         baterFoto();
+
+        binding.prosseguirFab.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+            }else{
+                binding.prosseguirFab.setVisibility(View.GONE);
+
+                // Capture a tela como um bitmap
+                try {
+                    // create bitmap screen capture
+                    View v1 = getWindow().getDecorView().getRootView();
+                    v1.setDrawingCacheEnabled(true);
+                    Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+                    v1.setDrawingCacheEnabled(false);
+
+                    File externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    File imageFile = new File(externalFilesDir, UUID.randomUUID().toString() + ".jpg");
+
+                    FileOutputStream outputStream = new FileOutputStream(imageFile);
+                    int quality = 100;
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+
+                    List<String> listaAntiga = ImageUtils.loadList(getApplicationContext());
+                    listaAntiga.add(Uri.fromFile(imageFile).toString());
+                    ImageUtils.saveList(getApplicationContext(), listaAntiga);
+
+                } catch (Throwable e) {
+                    // Several error may come out with file handling or DOM
+                    Log.d("bucetuda", "onCreate: " + e.getMessage());
+                }
+                binding.prosseguirFab.setVisibility(View.VISIBLE);
+                finish();
+            }
+
+        } );
+
     }
 
-    @Override
+        @Override
     protected void onResume() {
         super.onResume();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess(Location location) {
                     if ( location != null){
@@ -135,16 +180,15 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
 
                         formattedDate = dateFormat.format(currentDate);
                         formattedTime = timeFormat.format(currentDate);
-                        // operador
 
-                        String operador;
-                        if (i.getStringExtra("operador").isEmpty()) {
-                            operador = "Nome não informado.";
-                        } else {
-                            operador = i.getStringExtra("operador");
-                        }
+                        // operador e obs
 
-                        String cordenadas = String.format("Lat: %f Long: %f", location.getLatitude(), location.getLongitude());
+                        String operador, obs;
+                        operador = Objects.requireNonNull(i.getStringExtra("operador")).isEmpty() ? "Nome não informado." : i.getStringExtra("operador");
+                        obs = Objects.requireNonNull(i.getStringExtra("obs")).isEmpty() ? "Sem observações." : i.getStringExtra("obs");
+
+
+                        @SuppressLint("DefaultLocale") String cordenadas = String.format("Lat: %f Long: %f", location.getLatitude(), location.getLongitude());
 
                         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
                         try {
@@ -156,7 +200,8 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
                                         String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
                                                 cordenadas + "\n" +
                                                 fullAddress + "\n" +
-                                                "Operador: " + operador
+                                                "Operador: " + operador + "\n" +
+                                                "Observações: " + obs
                                 );
                                 Log.d("Address", fullAddress);
                             } else {
@@ -166,32 +211,22 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
                             e.printStackTrace();
                         }
 
-                        binding.mapsicon.setOnClickListener( mapsIconView -> {
-                            Uri gmmIntentUri = Uri.parse("geo:" + location.getLatitude() + "," + location.getLongitude() + "?q=" + location.getLatitude() + "," + location.getLongitude());
-                            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                            mapIntent.setPackage("com.google.android.apps.maps");
-                            startActivity(mapIntent);
-                        });
+//                        binding.mapsicon.setOnClickListener( mapsIconView -> {
+//                            Uri gmmIntentUri = Uri.parse("geo:" + location.getLatitude() + "," + location.getLongitude() + "?q=" + location.getLatitude() + "," + location.getLongitude());
+//                            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                            mapIntent.setPackage("com.google.android.apps.maps");
+//                            startActivity(mapIntent);
+//                        });
                     }else{
                         Log.d("banana", "onNUll: ");
                     }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }).addOnFailureListener(e -> {
 
-            }
         });
     }
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         fusedLocationClient.getLastLocation()
@@ -222,6 +257,7 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             binding.imageView.setImageURI(imageUri);
+
 //            Bundle extras = data.getExtras();
 //            if (extras != null) {
 //                Bitmap imageBitmap = (Bitmap) extras.get("data");
