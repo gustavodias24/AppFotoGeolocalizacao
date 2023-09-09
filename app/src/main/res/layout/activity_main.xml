@@ -27,7 +27,25 @@
         android:id="@+id/recycler_fotos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp" />
+        android:layout_margin="8dp" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/camera_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_vertical"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/botao"
+        android:drawableRight="@drawable/baseline_add_a_photo_24"
+        android:gravity="center|center_vertical"
+        android:rotationX="-4"
+        android:text="tirar foto"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nome_operador_field"
@@ -42,6 +60,25 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/menu"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Categoria">
+
+        <AutoCompleteTextView
+            android:id="@+id/auto_complete"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -63,16 +100,16 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/camera_btn"
+        android:id="@+id/criar_ponto_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|center_vertical"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/botao"
-        android:drawableRight="@drawable/baseline_add_a_photo_24"
+        android:drawableRight="@drawable/baseline_place_24"
         android:gravity="center|center_vertical"
         android:rotationX="-4"
-        android:text="tirar foto"
+        android:text="Criar ponto no mapa"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
         android:textSize="20sp"

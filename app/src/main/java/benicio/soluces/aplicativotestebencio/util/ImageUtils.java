@@ -1,9 +1,15 @@
 package benicio.soluces.aplicativotestebencio.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Base64;
+
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -13,6 +19,8 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import benicio.soluces.aplicativotestebencio.R;
 
 public class ImageUtils {
     private static  final String PREF_NAME_PREFERENCES_PARSER = "imageDataParse";
@@ -53,5 +61,43 @@ public class ImageUtils {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    public static Drawable getIconeDoPonto(String categoria, int larguraEmPixels, int alturaEmPixels, Context c) {
+
+
+        @SuppressLint("ResourceType") Drawable arvore = ContextCompat.getDrawable(c, R.raw.arvore);
+        @SuppressLint("ResourceType") Drawable erosao = ContextCompat.getDrawable(c, R.raw.erosao);
+        @SuppressLint("ResourceType") Drawable estacaoenergia = ContextCompat.getDrawable(c, R.raw.estacaoenergia);
+        @SuppressLint("ResourceType") Drawable outros = ContextCompat.getDrawable(c, R.raw.outros);
+        @SuppressLint("ResourceType") Drawable poste = ContextCompat.getDrawable(c, R.raw.poste);
+        @SuppressLint("ResourceType") Drawable rocada = ContextCompat.getDrawable(c, R.raw.rocada);
+        Drawable drawable = null;
+
+        switch (categoria) {
+            case "árvore":
+                drawable = arvore;
+                break;
+            case "poste":
+                drawable = poste;
+                break;
+            case "área de roçada":
+                drawable = rocada;
+                break;
+            case "subestação de energia":
+                drawable = estacaoenergia;
+                break;
+            case "erosão":
+                drawable = erosao;
+                break;
+            case "outros":
+                drawable = outros;
+                break;
+        }
+
+        assert drawable != null;
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        Bitmap bitmapRedimensionado = Bitmap.createScaledBitmap(bitmap, larguraEmPixels, alturaEmPixels, false);
+        return new BitmapDrawable(c.getResources(), bitmapRedimensionado);
     }
 }

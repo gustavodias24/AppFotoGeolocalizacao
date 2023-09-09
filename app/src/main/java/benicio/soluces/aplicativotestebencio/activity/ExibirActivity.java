@@ -55,21 +55,16 @@ import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityExibirBinding;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 
-public class ExibirActivity extends AppCompatActivity implements LocationListener {
-
+public class ExibirActivity extends AppCompatActivity{
     private Intent i;
     private static final int PERMISSON_CODE = 1000;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_WRITE_STORAGE = 2;
-    private ConstraintLayout rootView;
-
     private Dialog dialog_foto;
     private Uri imageUri;
     String formattedDate;
     String formattedTime;
     private ActivityExibirBinding binding;
-    private static final int PERMISSIONS_REQUEST_LOCATION = 2;
-    private FusedLocationProviderClient fusedLocationClient;
     private SharedPreferences preferences;
 
     @SuppressLint("ResourceType")
@@ -80,7 +75,6 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
         setContentView(binding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        rootView = binding.layoutRootPica;
         i = getIntent();
 
         preferences = getSharedPreferences("logoPreferences", Context.MODE_PRIVATE);
@@ -93,17 +87,6 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
             byte[] decodedBytes = Base64.decode(preferences.getString("logoImage", null), Base64.DEFAULT);
             Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
             binding.logo.setImageBitmap(decodedBitmap);
-        }
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_LOCATION);
-        } else {
-            requestLocation();
         }
 
         configurarTextView();
@@ -157,99 +140,59 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
             }
 
         } );
-
+        configurarTextInfos();
     }
 
-        @Override
-    protected void onResume() {
-        super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onSuccess(Location location) {
-                    if ( location != null){
-                        Calendar calendar = Calendar.getInstance();
-                        Date currentDate = calendar.getTime();
+    @SuppressLint("SetTextI18n")
+    private void configurarTextInfos(){
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
 
-                        // Formatar a data e a hora
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        // Formatar a data e a hora
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-                        formattedDate = dateFormat.format(currentDate);
-                        formattedTime = timeFormat.format(currentDate);
+        formattedDate = dateFormat.format(currentDate);
+        formattedTime = timeFormat.format(currentDate);
 
-                        // operador e obs
+        // operador e obs
 
-                        String operador, obs;
-                        operador = Objects.requireNonNull(i.getStringExtra("operador")).isEmpty() ? "Nome não informado." : i.getStringExtra("operador");
-                        obs = Objects.requireNonNull(i.getStringExtra("obs")).isEmpty() ? "Sem observações." : i.getStringExtra("obs");
+        String operador, obs;
+        Double latitude, longitude;
+
+        latitude = i.getDoubleExtra("lat", 0);
+        longitude = i.getDoubleExtra("long", 0);
+
+        operador = Objects.requireNonNull(i.getStringExtra("operador")).isEmpty() ? "Nome não informado." : i.getStringExtra("operador");
+        obs = Objects.requireNonNull(i.getStringExtra("obs")).isEmpty() ? "Sem observações." : i.getStringExtra("obs");
 
 
-                        @SuppressLint("DefaultLocale") String cordenadas = String.format("Lat: %f Long: %f", location.getLatitude(), location.getLongitude());
+        @SuppressLint("DefaultLocale") String cordenadas = String.format("Lat: %f Long: %f", latitude, longitude);
 
-                        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                        try {
-                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            if (!addresses.isEmpty()) {
-                                Address address = addresses.get(0);
-                                String fullAddress = address.getAddressLine(0);
-                                binding.dados.setText(
-                                        String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
-                                                cordenadas + "\n" +
-                                                fullAddress + "\n" +
-                                                "Operador: " + operador + "\n" +
-                                                "Observações: " + obs
-                                );
-                                Log.d("Address", fullAddress);
-                            } else {
-                                Log.d("Address", "No address found");
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        try {
 
-//                        binding.mapsicon.setOnClickListener( mapsIconView -> {
-//                            Uri gmmIntentUri = Uri.parse("geo:" + location.getLatitude() + "," + location.getLongitude() + "?q=" + location.getLatitude() + "," + location.getLongitude());
-//                            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                            mapIntent.setPackage("com.google.android.apps.maps");
-//                            startActivity(mapIntent);
-//                        });
-                    }else{
-                        Log.d("banana", "onNUll: ");
-                    }
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+            if (!addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String fullAddress = address.getAddressLine(0);
+                binding.dados.setText(
+                        String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
+                                cordenadas + "\n" +
+                                fullAddress + "\n" +
+                                "Operador: " + operador + "\n" +
+                                "Observações: " + obs
+                );
+                Log.d("Address", fullAddress);
+            } else {
+                Log.d("Address", "No address found");
             }
-        }).addOnFailureListener(e -> {
-
-        });
-    }
-    private void requestLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    if (location != null) {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        updateLocationTextView(latitude, longitude);
-                    }
-                });
-    }
-
-    private void updateLocationTextView(double latitude, double longitude) {
-        String locationText = "Latitude: " + latitude + "\nLongitude: " + longitude;
-        Log.d("localizacao", "updateLocationTextView: " + locationText);;
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -265,9 +208,6 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
 //            }
         }
 
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION  && resultCode == RESULT_OK) {
-                requestLocation();
-        }
     }
 
     @Override
@@ -313,10 +253,6 @@ public class ExibirActivity extends AppCompatActivity implements LocationListene
 
     }
 
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        Log.d("penes", "" + location.getLatitude());
-    }
     public void baterFoto(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if ( checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){

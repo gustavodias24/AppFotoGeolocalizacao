@@ -5,9 +5,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -30,11 +34,13 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
 
+import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
+import benicio.soluces.aplicativotestebencio.util.ImageUtils;
+import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 
 public class MapaActivity extends AppCompatActivity {
-
     private ItemizedOverlayWithFocus<OverlayItem> mOverlay;
     private FusedLocationProviderClient fusedLocationClient;
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
@@ -63,6 +69,10 @@ public class MapaActivity extends AppCompatActivity {
         vbinding.fotoFab.setOnClickListener( view -> {
             finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        });
+        vbinding.fabMeusPontos.setOnClickListener( view -> {
+            finish();
+            startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
         });
     }
     public void configurarMap(){
@@ -124,7 +134,9 @@ public class MapaActivity extends AppCompatActivity {
         super.onPause();
         map.onPause();
     }
+
     private void createPointer() {
+
         // Verifique se o overlay anterior existe e remova-o
         if (mOverlay != null) {
             map.getOverlays().remove(mOverlay);
@@ -134,7 +146,18 @@ public class MapaActivity extends AppCompatActivity {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         items.add(new OverlayItem("Você", "Você esta aqui!", new GeoPoint(latitude, longitude)));
 
-        mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items,
+        for (PontoModel ponto : PontosUtils.loadList(getApplicationContext())){
+            items.add(new OverlayItem(ponto.getCategoria(), ponto.getObs(), new GeoPoint(ponto.getLatitude(), ponto.getLongitude())));
+        }
+
+        for (OverlayItem item : items) {
+            if ( !item.getTitle().equals("Você")){
+                item.setMarker(ImageUtils.getIconeDoPonto(item.getTitle(), 32 , 32, getApplicationContext()));
+            }
+        }
+
+
+        mOverlay = new ItemizedOverlayWithFocus<>(items,
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
