@@ -22,12 +22,12 @@ import benicio.soluces.aplicativotestebencio.databinding.ExibirImageLayoutBindin
 public class AdapterFotos extends RecyclerView.Adapter<AdapterFotos.MyViewHolder>{
     Dialog d;
 
-    List<Uri> lista;
+    List<String> lista;
     Context c;
 
     Activity activity;
 
-    public AdapterFotos(List<Uri> lista, Context c, Activity activity) {
+    public AdapterFotos(List<String> lista, Context c, Activity activity) {
         this.lista = lista;
         this.c = c;
         this.activity = activity;
@@ -41,12 +41,12 @@ public class AdapterFotos extends RecyclerView.Adapter<AdapterFotos.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.fotoExibir.setImageURI(lista.get(position));
+        holder.fotoExibir.setImageURI(Uri.parse(lista.get(position)));
         holder.fotoExibir.setOnClickListener( view -> {
             AlertDialog.Builder b = new AlertDialog.Builder(activity);
             ExibirImageLayoutBinding bindingImageView = ExibirImageLayoutBinding.inflate(activity.getLayoutInflater());
             b.setPositiveButton("Fechar", null);
-            bindingImageView.screenShortImage.setImageURI(lista.get(position));
+            bindingImageView.screenShortImage.setImageURI(Uri.parse(lista.get(position)));
             b.setView(bindingImageView.getRoot());
             d = b.create();
             d.show();

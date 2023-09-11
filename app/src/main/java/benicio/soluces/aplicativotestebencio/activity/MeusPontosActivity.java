@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusPontosBinding;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
+import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
 public class MeusPontosActivity extends AppCompatActivity {
     private ActivityMeusPontosBinding vbindig;
@@ -28,6 +31,7 @@ public class MeusPontosActivity extends AppCompatActivity {
         setContentView(vbindig.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         configurarRecyclerPontos();
+        configurarListenerRecycler();
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Pontos salvos");
@@ -50,5 +54,32 @@ public class MeusPontosActivity extends AppCompatActivity {
         adapterPontos = new AdapterPontos(PontosUtils.loadList(getApplicationContext()), getApplicationContext());
         recyclerPontos.setAdapter(adapterPontos);
 
+    }
+
+    public void configurarListenerRecycler(){
+        recyclerPontos.addOnItemTouchListener(new RecyclerItemClickListener(
+                getApplicationContext(),
+                recyclerPontos,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.putExtra("modoExibicao", true);
+                        i.putExtra("position", position);
+                        startActivity(i);
+                        finish();
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    }
+                }
+        ));
     }
 }

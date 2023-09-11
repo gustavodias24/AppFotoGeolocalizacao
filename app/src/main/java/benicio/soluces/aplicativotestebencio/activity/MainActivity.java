@@ -19,10 +19,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -30,8 +32,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputLayout;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,23 +54,91 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_LOCATION = 2;
     private Double latitude, longitude;
     private FusedLocationProviderClient fusedLocationClient;
-    private List<Uri> listaDeFotos = new ArrayList<>();
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    private List<String> listaDeFotos = new ArrayList<>();
     private AdapterFotos adapterFotos;
     private RecyclerView recyclerFotos;
-
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private static final int REQUEST_IMAGE_LOGO = 1000;
     private ActivityMainBinding binding;
+
+    private Bundle b;
+    private Boolean modoExibicao = false;
+    private int positionPonto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        verificarPermissoes();
+        criarRecyclerFotos();
+
+        b = getIntent().getExtras();
+
+        if ( b != null){
+            modoExibicao = b.getBoolean("modoExibicao");
+            positionPonto = b.getInt("position");
+        }
+
+        if ( modoExibicao ){
+            PontoModel pontoModel = PontosUtils.loadList(getApplicationContext()).get(positionPonto);
+            binding.criarPontoBtn.setVisibility(View.GONE);
+            binding.cameraBtn.setVisibility(View.GONE);
+            binding.logoBtn.setVisibility(View.GONE);
+            binding.tutorialBtn.setVisibility(View.GONE);
+
+            binding.nomeOperadorField.getEditText().setEnabled(false);
+            binding.obsField.getEditText().setEnabled(false);
+            binding.menu.getEditText().setEnabled(false);
+
+            binding.nomeOperadorField.getEditText().setText(pontoModel.getOperador());
+            binding.obsField.getEditText().setText(pontoModel.getObs());
+            binding.menu.getEditText().setText(pontoModel.getCategoria());
+
+            listaDeFotos.addAll(pontoModel.getImages());
+            adapterFotos.notifyDataSetChanged();
+
+        }
+
+
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        if ( !modoExibicao ){
+            configurarMenuCategoria();
+        }
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000); // Intervalo de atualização da localização em milissegundos (10 segundos)
+        locationRequest.setFastestInterval(5000); // Intervalo mais rápido de atualização em milissegundos (5 segundos)
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult != null && locationResult.getLastLocation() != null) {
+                    Location location = locationResult.getLastLocation();
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                }
+            }
+        };
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            startLocationUpdates();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
+        }
+
         preferences = getSharedPreferences("logoPreferences", Context.MODE_PRIVATE);
         editor = preferences.edit();
 
@@ -74,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
             binding.logoImg.setImageBitmap(decodedBitmap);
         }
         binding.cameraBtn.setOnClickListener( fotoView -> {
-            atualizarLatELong();
             Intent i  = new Intent(getApplicationContext(), ExibirActivity.class);
             i.putExtra("operador", binding.nomeOperadorField.getEditText().getText().toString());
             i.putExtra("obs", binding.obsField.getEditText().getText().toString());
@@ -112,16 +186,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        verificarPermissoes();
-        criarRecyclerFotos();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        configurarMenuCategoria();
+    }
 
-        atualizarLatELong();
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     private void configurarMenuCategoria (){
@@ -138,22 +211,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        atualizarLatELong();
-
-        listaDeFotos.clear();
-        for ( String imageString : ImageUtils.loadList(getApplicationContext())){
-            listaDeFotos.add(Uri.parse(imageString));
+        if ( !modoExibicao ){
+            listaDeFotos.clear();
+            for ( String imageString : ImageUtils.loadList(getApplicationContext())){
+                listaDeFotos.add(imageString);
+            }
+            adapterFotos.notifyDataSetChanged();
         }
-        adapterFotos.notifyDataSetChanged();
-
-
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if ( item.getItemId() == android.R.id.home){
-            irParaOmapaActivity();
+            if ( !modoExibicao ){
+                irParaOmapaActivity();
+            }else{
+                startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
+                finish();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -179,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (requestCode == PERMISSIONS_REQUEST_LOCATION  && resultCode == RESULT_OK) {
-            atualizarLatELong();
+           startLocationUpdates();
         }
     }
 
@@ -204,26 +279,5 @@ public class MainActivity extends AppCompatActivity {
         adapterFotos = new AdapterFotos(listaDeFotos, getApplicationContext(), MainActivity.this);
         recyclerFotos.setAdapter(adapterFotos);
     }
-
-    public void atualizarLatELong(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_LOCATION);
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, location -> {
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                        }
-                    });
-        }
-    }
-
 
 }

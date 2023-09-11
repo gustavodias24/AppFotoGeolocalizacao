@@ -6,11 +6,11 @@ import java.util.List;
 
 public class PontoModel {
 
-    List<Uri> images;
+    List<String> images;
     String categoria, obs, operador;
     Double latitude, longitude;
 
-    public PontoModel(List<Uri> images, String categoria, String obs, String operador, Double latitude, Double longitude) {
+    public PontoModel(List<String> images, String categoria, String obs, String operador, Double latitude, Double longitude) {
         this.images = images;
         this.categoria = categoria;
         this.obs = obs;
@@ -22,11 +22,11 @@ public class PontoModel {
     public PontoModel() {
     }
 
-    public List<Uri> getImages() {
+    public List<String> getImages() {
         return images;
     }
 
-    public void setImages(List<Uri> images) {
+    public void setImages(List<String> images) {
         this.images = images;
     }
 
