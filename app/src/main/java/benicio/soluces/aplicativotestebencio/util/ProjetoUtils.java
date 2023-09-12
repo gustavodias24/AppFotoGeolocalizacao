@@ -30,12 +30,12 @@ public class ProjetoUtils {
 
         return new ArrayList<>();
     }
-    public static void saveList(List<ProjetoModel> carros, Context c) {
+    public static void saveList(List<ProjetoModel> projetos, Context c) {
         SharedPreferences sharedPreferences = c.getSharedPreferences(PREFS_PROJETO, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         Gson gson = new Gson();
-        String carrosJson = gson.toJson(carros);
+        String carrosJson = gson.toJson(projetos);
 
         editor.putString(PROJETO_KEY, carrosJson);
         editor.apply();

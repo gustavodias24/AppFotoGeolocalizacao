@@ -147,21 +147,44 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         });
 
         binding.criarPontoBtn.setOnClickListener( view -> {
-            String obs, categoria;
+            String obs, categoria, projetoPertecente;
 
-            obs = binding.obsField.getEditText().getText().toString();
-            categoria = binding.menu.getEditText().getText().toString().isEmpty() ? "Não informado" : binding.menu.getEditText().getText().toString();
+            obs = binding.obsField.getEditText().getText().toString().isEmpty() ? "Sem observações" : binding.obsField.getEditText().getText().toString();
+            categoria = binding.menu.getEditText().getText().toString().isEmpty() ? "outros" : binding.menu.getEditText().getText().toString();
+            projetoPertecente = binding.menu2.getEditText().getText().toString();
 
-            if (!categoria.isEmpty()){
-                List<PontoModel> listaAntiga = PontosUtils.loadList(getApplicationContext());
-                listaAntiga.add(new PontoModel(listaDeFotos, categoria, obs, operador, latitude, longitude));
-                PontosUtils.saveList(listaAntiga, getApplicationContext());
+            binding.menu2.getEditText().setError(null);
+            if ( !projetoPertecente.isEmpty() ){
+
+                ProjetoModel projetoModel = null;
+                List<ProjetoModel> listaAntiga = ProjetoUtils.loadList(getApplicationContext());
+
+                int pos = 0;
+                for ( ProjetoModel p : listaAntiga){
+                    if (p.getNomeProjeto() == projetoPertecente) {
+                        projetoModel = p;
+                        break;
+                    }
+                    pos++;
+                }
+
+                assert projetoModel != null;
+                projetoModel.getListaDePontos().add(
+                        new PontoModel(listaDeFotos, categoria, obs, operador, latitude, longitude)
+                );
+
+                listaAntiga.remove(pos);
+                listaAntiga.add(pos, projetoModel);
+
+                ProjetoUtils.saveList(listaAntiga, getApplicationContext());
+
                 Toast.makeText(this, "Ponto adicionado com sucesso!", Toast.LENGTH_SHORT).show();
-                
+
                 irParaOmapaActivity();
             }else{
-                Toast.makeText(this, "Preencha todas as informações", Toast.LENGTH_SHORT).show();
+                binding.menu2.getEditText().setError("Escolha um projeto para esse ponto!");
             }
+
         });
 
     }
