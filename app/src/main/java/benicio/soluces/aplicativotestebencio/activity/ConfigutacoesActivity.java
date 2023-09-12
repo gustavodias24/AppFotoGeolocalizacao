@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityConfigutacoesBinding;
@@ -26,14 +27,19 @@ public class ConfigutacoesActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     private static final int REQUEST_IMAGE_LOGO = 1000;
+    private String operador;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityConfigutacoesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        preferences = getSharedPreferences("logoPreferences", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("configPreferences", Context.MODE_PRIVATE);
         editor = preferences.edit();
+
+        operador = preferences.getString("operador", "");
+
+        binding.nomeOperadorField.getEditText().setText(operador);
 
         if ( preferences.getString("logoImage", null) != null){
             binding.logoImg.setVisibility(View.VISIBLE);
@@ -49,6 +55,19 @@ public class ConfigutacoesActivity extends AppCompatActivity {
         binding.logoBtn.setOnClickListener( logoView ->{
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, REQUEST_IMAGE_LOGO);
+        });
+
+        binding.salvarBtn.setOnClickListener( view -> {
+
+            String nomeOperador = binding.nomeOperadorField.getEditText().getText().toString();
+            if ( !nomeOperador.isEmpty() ){
+                editor.putString("operador", nomeOperador);
+                editor.apply();
+                Toast.makeText(this, "Informações salvas", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(this, "Preencha as Informações", Toast.LENGTH_SHORT).show();
+            }
+
         });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

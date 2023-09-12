@@ -77,7 +77,7 @@ public class ExibirActivity extends AppCompatActivity{
 
         i = getIntent();
 
-        preferences = getSharedPreferences("logoPreferences", Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("configPreferences", Context.MODE_PRIVATE);
 
         if ( preferences.getString("logoImage", null) == null){
             binding.logo.setVisibility(View.GONE);

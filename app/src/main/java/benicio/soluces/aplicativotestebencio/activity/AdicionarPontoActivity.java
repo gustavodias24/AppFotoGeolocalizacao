@@ -57,6 +57,8 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     private AdapterFotos adapterFotos;
     private RecyclerView recyclerFotos;
 
+    private String operador;
+
 
     private ActivityAdicionarPontoBinding binding;
 
@@ -70,6 +72,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         binding = ActivityAdicionarPontoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        operador = getSharedPreferences("configPreferences", MODE_PRIVATE).getString("operador", "");
         verificarPermissoes();
         criarRecyclerFotos();
 
@@ -85,11 +88,9 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             binding.criarPontoBtn.setVisibility(View.GONE);
             binding.cameraBtn.setVisibility(View.GONE);
 
-            binding.nomeOperadorField.getEditText().setEnabled(false);
             binding.obsField.getEditText().setEnabled(false);
             binding.menu.getEditText().setEnabled(false);
 
-            binding.nomeOperadorField.getEditText().setText(pontoModel.getOperador());
             binding.obsField.getEditText().setText(pontoModel.getObs());
             binding.menu.getEditText().setText(pontoModel.getCategoria());
 
@@ -135,8 +136,8 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
         binding.cameraBtn.setOnClickListener( fotoView -> {
             Intent i  = new Intent(getApplicationContext(), ExibirActivity.class);
-            i.putExtra("operador", binding.nomeOperadorField.getEditText().getText().toString());
             i.putExtra("obs", binding.obsField.getEditText().getText().toString());
+            i.putExtra("operador", operador);
             i.putExtra("tipo", 0);
             i.putExtra("lat", latitude);
             i.putExtra("long", longitude);
@@ -144,10 +145,9 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         });
 
         binding.criarPontoBtn.setOnClickListener( view -> {
-            String obs, operador, categoria;
+            String obs, categoria;
 
             obs = binding.obsField.getEditText().getText().toString();
-            operador = binding.nomeOperadorField.getEditText().getText().toString().isEmpty() ? "Sem observações" : binding.nomeOperadorField.getEditText().getText().toString();
             categoria = binding.menu.getEditText().getText().toString().isEmpty() ? "Não informado" : binding.menu.getEditText().getText().toString();
 
             if (!categoria.isEmpty()){

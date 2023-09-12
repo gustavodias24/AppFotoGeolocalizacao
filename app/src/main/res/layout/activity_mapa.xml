@@ -43,15 +43,14 @@
             app:fab_label="Aonde estou?" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:visibility="gone"
-            android:id="@+id/fab_meus_pontos"
+            android:id="@+id/foto_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/baseline_place_24"
+            android:src="@drawable/baseline_add_a_photo_24"
             app:fabSize="mini"
             app:fab_colorNormal="#673AB7"
             app:fab_colorPressed="#3F2370"
-            app:fab_label="Pontos" />
+            app:fab_label="Adicionar ponto" />
 
         <com.github.clans.fab.FloatingActionButton
             android:visibility="gone"
@@ -65,6 +64,18 @@
             app:fab_label="Projetos" />
 
         <com.github.clans.fab.FloatingActionButton
+            android:visibility="gone"
+            android:id="@+id/fab_meus_pontos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_place_24"
+            app:fabSize="mini"
+            app:fab_colorNormal="#673AB7"
+            app:fab_colorPressed="#3F2370"
+            app:fab_label="Pontos" />
+
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_configs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,15 +85,7 @@
             app:fab_colorPressed="#3F2370"
             app:fab_label="Configurações" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/foto_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_add_a_photo_24"
-            app:fabSize="mini"
-            app:fab_colorNormal="#673AB7"
-            app:fab_colorPressed="#3F2370"
-            app:fab_label="Adicionar ponto" />
+
 
     </com.github.clans.fab.FloatingActionMenu>
 

@@ -18,10 +18,23 @@
     <ImageView
         android:id="@+id/logo_img"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="201dp"
         android:src="@raw/logo"
         android:visibility="gone" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/nome_operador_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome do operador"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp" />
+    </com.google.android.material.textfield.TextInputLayout>
     <Button
         android:id="@+id/logo_btn"
         android:layout_width="wrap_content"
@@ -36,6 +49,24 @@
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+
+    <Button
+        android:id="@+id/salvar_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/botao"
+        android:drawableRight="@drawable/baseline_save_24"
+        android:rotationX="-4"
+        android:text="Salvar"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
     <Button
         android:id="@+id/tutorial_btn"
         android:layout_width="wrap_content"

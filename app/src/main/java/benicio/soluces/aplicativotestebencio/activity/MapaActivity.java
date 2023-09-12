@@ -66,8 +66,6 @@ public class MapaActivity extends AppCompatActivity {
 
         bundle = getIntent().getExtras();
 
-        vbinding.menuOpcoes.open(true);
-
         dialogCarregamento = RetrofitUtils.criarDialogCarregando(MapaActivity.this);
         dialogCarregamento.show();
 
@@ -205,15 +203,15 @@ public class MapaActivity extends AppCompatActivity {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         items.add(new OverlayItem("Você", "Você esta aqui!", new GeoPoint(latitude, longitude)));
 
-        for (PontoModel ponto : PontosUtils.loadList(getApplicationContext())){
-            items.add(new OverlayItem(ponto.getCategoria(), ponto.getObs(), new GeoPoint(ponto.getLatitude(), ponto.getLongitude())));
-        }
-
-        for (OverlayItem item : items) {
-            if ( !item.getTitle().equals("Você")){
-                item.setMarker(ImageUtils.getIconeDoPonto(item.getTitle(), 32 , 32, getApplicationContext()));
-            }
-        }
+//        for (PontoModel ponto : PontosUtils.loadList(getApplicationContext())){
+//            items.add(new OverlayItem(ponto.getCategoria(), ponto.getObs(), new GeoPoint(ponto.getLatitude(), ponto.getLongitude())));
+//        }
+//
+//        for (OverlayItem item : items) {
+//            if ( !item.getTitle().equals("Você")){
+//                item.setMarker(ImageUtils.getIconeDoPonto(item.getTitle(), 32 , 32, getApplicationContext()));
+//            }
+//        }
 
 
         mOverlay = new ItemizedOverlayWithFocus<>(items,
