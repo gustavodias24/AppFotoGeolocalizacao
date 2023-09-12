@@ -44,8 +44,10 @@ import benicio.soluces.aplicativotestebencio.databinding.ActivityAdicionarPontoB
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterFotos;
+import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
+import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 
 public class AdicionarPontoActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_LOCATION = 2;
@@ -173,12 +175,23 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
     private void configurarMenuCategoria (){
         String[] items = {"poste", "árvore", "área de roçada", "subestação de energia", "erosão", "outros"};
+
+        List<String> listaProjetosName = new ArrayList<>();
+
+        for (ProjetoModel p : ProjetoUtils.loadList(getApplicationContext())){
+            listaProjetosName.add(p.getNomeProjeto());
+        }
+        ArrayAdapter<String> adapterProjetoMenu = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, listaProjetosName);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
+
         TextInputLayout categoriaMenu = binding.menu;
+        TextInputLayout projetoMenu = binding.menu2;
 
         AutoCompleteTextView autoCompleteTextView = categoriaMenu.findViewById(R.id.auto_complete);
+        AutoCompleteTextView autoCompleteTextView2 = projetoMenu.findViewById(R.id.auto_complete2);
 
         autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView2.setAdapter(adapterProjetoMenu);
     }
 
     @SuppressLint("NotifyDataSetChanged")

@@ -41,4 +41,16 @@
             app:fab_label="Adicionar projeto" />
 
     </com.github.clans.fab.FloatingActionMenu>
+
+    <TextView
+        android:id="@+id/aviso_empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nenhum projeto."
+        android:textColor="#888888"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/reycler_projetos"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
