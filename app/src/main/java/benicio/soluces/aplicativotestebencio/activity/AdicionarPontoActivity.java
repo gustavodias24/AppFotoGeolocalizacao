@@ -24,7 +24,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,19 +37,17 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputLayout;
 
-import org.osmdroid.util.GeoPoint;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import benicio.soluces.aplicativotestebencio.databinding.ActivityAdicionarPontoBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterFotos;
-import benicio.soluces.aplicativotestebencio.databinding.ActivityMainBinding;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class AdicionarPontoActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_LOCATION = 2;
     private Double latitude, longitude;
     private FusedLocationProviderClient fusedLocationClient;
@@ -59,10 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private List<String> listaDeFotos = new ArrayList<>();
     private AdapterFotos adapterFotos;
     private RecyclerView recyclerFotos;
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
-    private static final int REQUEST_IMAGE_LOGO = 1000;
-    private ActivityMainBinding binding;
+
+
+    private ActivityAdicionarPontoBinding binding;
 
     private Bundle b;
     private Boolean modoExibicao = false;
@@ -71,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityAdicionarPontoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         verificarPermissoes();
@@ -88,8 +84,6 @@ public class MainActivity extends AppCompatActivity {
             PontoModel pontoModel = PontosUtils.loadList(getApplicationContext()).get(positionPonto);
             binding.criarPontoBtn.setVisibility(View.GONE);
             binding.cameraBtn.setVisibility(View.GONE);
-            binding.logoBtn.setVisibility(View.GONE);
-            binding.tutorialBtn.setVisibility(View.GONE);
 
             binding.nomeOperadorField.getEditText().setEnabled(false);
             binding.obsField.getEditText().setEnabled(false);
@@ -105,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Adicionar ponto");
 
         if ( !modoExibicao ){
             configurarMenuCategoria();
@@ -139,15 +133,6 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
         }
 
-        preferences = getSharedPreferences("logoPreferences", Context.MODE_PRIVATE);
-        editor = preferences.edit();
-
-        if ( preferences.getString("logoImage", null) != null){
-            binding.logoImg.setVisibility(View.VISIBLE);
-            byte[] decodedBytes = Base64.decode(preferences.getString("logoImage", null), Base64.DEFAULT);
-            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            binding.logoImg.setImageBitmap(decodedBitmap);
-        }
         binding.cameraBtn.setOnClickListener( fotoView -> {
             Intent i  = new Intent(getApplicationContext(), ExibirActivity.class);
             i.putExtra("operador", binding.nomeOperadorField.getEditText().getText().toString());
@@ -156,15 +141,6 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("lat", latitude);
             i.putExtra("long", longitude);
             startActivity(i);
-        });
-
-        binding.tutorialBtn.setOnClickListener( tutorialView -> {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=n79nS_xtlI4")));
-        });
-
-        binding.logoBtn.setOnClickListener( logoView ->{
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, REQUEST_IMAGE_LOGO);
         });
 
         binding.criarPontoBtn.setOnClickListener( view -> {
@@ -185,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todas as informações", Toast.LENGTH_SHORT).show();
             }
         });
-
-
 
     }
 
@@ -241,17 +215,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_LOGO && resultCode == RESULT_OK && data != null) {
-            Uri selectedImageUri = data.getData();
-            editor.putString("logoImage", ImageUtils.imageToBase64(selectedImageUri, getApplicationContext()));
-            editor.apply();
-
-
-            binding.logoImg.setVisibility(View.VISIBLE);
-            byte[] decodedBytes = Base64.decode(preferences.getString("logoImage", null), Base64.DEFAULT);
-            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            binding.logoImg.setImageBitmap(decodedBitmap);
-        }
 
         if (requestCode == PERMISSIONS_REQUEST_LOCATION  && resultCode == RESULT_OK) {
            startLocationUpdates();
@@ -262,10 +225,10 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)   != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CAMERA}, 1);
-            ActivityCompat.requestPermissions(MainActivity.this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+            ActivityCompat.requestPermissions(AdicionarPontoActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            ActivityCompat.requestPermissions(AdicionarPontoActivity.this, new String[] {Manifest.permission.CAMERA}, 1);
+            ActivityCompat.requestPermissions(AdicionarPontoActivity.this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            ActivityCompat.requestPermissions(AdicionarPontoActivity.this, new String[] {Manifest.permission.ACCESS_NETWORK_STATE}, 1);
             return;
         }
 
@@ -276,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerFotos.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerFotos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
         recyclerFotos.setHasFixedSize(true);
-        adapterFotos = new AdapterFotos(listaDeFotos, getApplicationContext(), MainActivity.this);
+        adapterFotos = new AdapterFotos(listaDeFotos, getApplicationContext(), AdicionarPontoActivity.this);
         recyclerFotos.setAdapter(adapterFotos);
     }
 

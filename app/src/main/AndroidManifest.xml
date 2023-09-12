@@ -31,10 +31,18 @@
         tools:targetApi="31">
         <activity
             android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
-            android:name=".activity.MeusPontosActivity"
+            android:name=".activity.ConfigutacoesActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.MeusProjetosActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />
+        <activity
+            android:name=".activity.MeusPontosActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />
+        <activity
+            android:name=".activity.AdicionarPontoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />

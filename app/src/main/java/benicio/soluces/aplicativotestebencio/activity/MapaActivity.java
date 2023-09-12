@@ -6,18 +6,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -41,9 +37,9 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
 
+import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
-import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
@@ -59,14 +55,18 @@ public class MapaActivity extends AppCompatActivity {
     private MapController mapController;
     double latitude, longitude;
     private FloatingActionButton fab_onde_estou;
-
     private Dialog dialogCarregamento;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         vbinding = ActivityMapaBinding.inflate(getLayoutInflater());
         setContentView(vbinding.getRoot());
+
+        bundle = getIntent().getExtras();
+
+        vbinding.menuOpcoes.open(true);
 
         dialogCarregamento = RetrofitUtils.criarDialogCarregando(MapaActivity.this);
         dialogCarregamento.show();
@@ -111,12 +111,28 @@ public class MapaActivity extends AppCompatActivity {
         });
         vbinding.fotoFab.setOnClickListener(view -> {
             finish();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), AdicionarPontoActivity.class));
         });
-        vbinding.fabMeusPontos.setOnClickListener(view -> {
+        vbinding.fabConfigs.setOnClickListener(view -> {
             finish();
-            startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
+            startActivity(new Intent(getApplicationContext(), ConfigutacoesActivity.class));
         });
+
+        // se o bundle não for null ele vem de outro activity
+        if(bundle != null){
+            vbinding.fabMeusPontos.setVisibility(View.VISIBLE);
+            vbinding.fabMeusPontos.setOnClickListener(view -> {
+                finish();
+                startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
+            });
+        }else{
+            vbinding.fabMeusProjetos.setVisibility(View.VISIBLE);
+            vbinding.fabMeusProjetos.setOnClickListener(view -> {
+                finish();
+                startActivity(new Intent(getApplicationContext(), MeusProjetosActivity.class));
+            });
+        }
+
     }
 
     private void stopLocationUpdates() {

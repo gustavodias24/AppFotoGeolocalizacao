@@ -13,10 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
-import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusPontosBinding;
-import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
@@ -63,7 +61,7 @@ public class MeusPontosActivity extends AppCompatActivity {
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent i = new Intent(getApplicationContext(), AdicionarPontoActivity.class);
                         i.putExtra("modoExibicao", true);
                         i.putExtra("position", position);
                         startActivity(i);
