@@ -97,11 +97,11 @@ public class MeusProjetosActivity extends AppCompatActivity {
                         listaProjetoAntiga,
                         getApplicationContext()
                 );
-
+                dialogCriarProjeto.dismiss();
                 Toast.makeText(this, "Projeto adicionado!", Toast.LENGTH_SHORT).show();
                 atualizarLista();
                 bindingAdicionarProjeto.tituloProjetoField.getEditText().setText("");
-                bindingAdicionarProjeto.dataField.getEditText().setText("");
+
             }else{
                 Toast.makeText(this, "Título e data obrigatórios!", Toast.LENGTH_SHORT).show();
             }

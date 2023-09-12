@@ -30,9 +30,12 @@
         android:theme="@style/Theme.AplicativoTesteBencio"
         tools:targetApi="31">
         <activity
-            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
-            android:name=".activity.ConfigutacoesActivity"
+            android:name=".MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.ConfigutacoesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />
         <activity
             android:name=".activity.MeusProjetosActivity"
             android:exported="false"
