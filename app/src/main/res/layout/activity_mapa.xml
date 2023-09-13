@@ -53,7 +53,6 @@
             app:fab_label="Adicionar ponto" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:visibility="gone"
             android:id="@+id/fab_meus_projetos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

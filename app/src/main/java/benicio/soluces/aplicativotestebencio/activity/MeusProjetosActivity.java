@@ -4,33 +4,38 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import benicio.soluces.aplicativotestebencio.R;
-import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterProjetos;
-import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusPontosBinding;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusProjetosBinding;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutAdicionarProjetoBinding;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
-import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
+import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
 public class MeusProjetosActivity extends AppCompatActivity {
 
@@ -40,7 +45,9 @@ public class MeusProjetosActivity extends AppCompatActivity {
     private List<ProjetoModel> listaProjetos = new ArrayList<>();
     private Dialog dialogCriarProjeto;
     private String dataAtual;
+    private Dialog dialogDelete;
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +70,21 @@ public class MeusProjetosActivity extends AppCompatActivity {
 
         configurarRecyclerProjetos();
         atualizarLista();
+
+        AtomicBoolean isIcon1 = new AtomicBoolean(true);
+        vbindig.organizarProjetoFab.setOnClickListener( view -> {
+            Collections.reverse(listaProjetos);
+            adapterProjetos.notifyDataSetChanged();
+            if (isIcon1.get()){
+                isIcon1.set(false);
+                vbindig.organizarProjetoFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext() , R.drawable.baseline_keyboard_arrow_down_24));
+            }else{
+                isIcon1.set(true);
+                vbindig.organizarProjetoFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.baseline_keyboard_arrow_up_24));
+            }
+        });
+
+        configuarAcaoProjetos();
     }
 
     @Override
@@ -85,12 +107,14 @@ public class MeusProjetosActivity extends AppCompatActivity {
             
             if ( !titulo.isEmpty() && !data.isEmpty()){
 
+                List<ProjetoModel> listaProjetoAntiga = ProjetoUtils.loadList(getApplicationContext());
+
                 ProjetoModel projetoModel = new ProjetoModel(
+                        listaProjetoAntiga.isEmpty() ? 0 : listaProjetoAntiga.size() + 1,
                         titulo,
                         data,
                         new ArrayList<>()
                 );
-                List<ProjetoModel> listaProjetoAntiga = ProjetoUtils.loadList(getApplicationContext());
                 listaProjetoAntiga.add(projetoModel);
 
                 ProjetoUtils.saveList(
@@ -126,4 +150,63 @@ public class MeusProjetosActivity extends AppCompatActivity {
         adapterProjetos = new AdapterProjetos(listaProjetos, getApplicationContext());
         recyclerProjetos.setAdapter(adapterProjetos);
     }
+
+    public void configuarAcaoProjetos(){
+        recyclerProjetos.addOnItemTouchListener( new RecyclerItemClickListener(
+                getApplicationContext(),
+                recyclerProjetos,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent i = new Intent(getApplicationContext(), MapaActivity.class);
+                        i.putExtra("idProjeto", listaProjetos.get(position).getIdProjeto());
+                        startActivity(i);
+                        finish();
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    }
+                }
+        ));
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+                AlertDialog.Builder b = new AlertDialog.Builder(MeusProjetosActivity.this);
+                b.setMessage(String.format(
+                        "Tem certeza que deseja deleta %s?", listaProjetos.get(viewHolder.getAdapterPosition()).getNomeProjeto()
+                ));
+                b.setPositiveButton("Sim", (dialogInterface, i) -> {
+
+                    listaProjetos.remove(viewHolder.getAdapterPosition());
+                    ProjetoUtils.saveList(listaProjetos, getApplicationContext());
+
+                    Toast.makeText(MeusProjetosActivity.this, "Projeto deletado com sucesso!", Toast.LENGTH_SHORT).show();
+                    atualizarLista();
+                    dialogDelete.dismiss();
+                });
+                b.setNegativeButton("Não", null);
+
+                dialogDelete = b.create();
+                dialogDelete.show();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+
+        itemTouchHelper.attachToRecyclerView(recyclerProjetos);
+    }
+
+
 }

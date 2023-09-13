@@ -36,12 +36,15 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
+import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
+import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
 
 public class MapaActivity extends AppCompatActivity {
@@ -118,21 +121,63 @@ public class MapaActivity extends AppCompatActivity {
 
         // se o bundle não for null ele vem de outro activity
         if(bundle != null){
+
             vbinding.fabMeusPontos.setVisibility(View.VISIBLE);
             vbinding.fabMeusPontos.setOnClickListener(view -> {
                 finish();
                 startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
             });
-        }else{
-            vbinding.fabMeusProjetos.setVisibility(View.VISIBLE);
-            vbinding.fabMeusProjetos.setOnClickListener(view -> {
-                finish();
-                startActivity(new Intent(getApplicationContext(), MeusProjetosActivity.class));
-            });
+
+            criarPontosDoProejeto(bundle.getInt("idProjeto"));
+
         }
 
-    }
+        vbinding.fabMeusProjetos.setOnClickListener(view -> {
+            finish();
+            startActivity(new Intent(getApplicationContext(), MeusProjetosActivity.class));
+        });
 
+
+    }
+    private  void criarPontosDoProejeto(int id){
+        List<PontoModel> listaPontosDoProjeto = new ArrayList<>();
+        for (ProjetoModel p : ProjetoUtils.loadList(getApplicationContext())){
+            if ( p.getIdProjeto() == id){
+                listaPontosDoProjeto.addAll(p.getListaDePontos());
+                break;
+            }
+        }
+
+        if ( !listaPontosDoProjeto.isEmpty() ){
+            ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+
+            for (PontoModel ponto : listaPontosDoProjeto){
+                items.add(new OverlayItem(ponto.getCategoria(), ponto.getObs(), new GeoPoint(ponto.getLatitude(), ponto.getLongitude())));
+            }
+
+            for (OverlayItem item : items) {
+                if ( !item.getTitle().equals("Você")){
+                    item.setMarker(ImageUtils.getIconeDoPonto(item.getTitle(), 32 , 32, getApplicationContext()));
+                }
+            }
+            ItemizedOverlayWithFocus<OverlayItem> overlayItensProjeto = new ItemizedOverlayWithFocus<>(items,
+                    new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                        @Override
+                        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onItemLongPress(final int index, final OverlayItem item) {
+                            return false;
+                        }
+                    }, this);
+
+            overlayItensProjeto.setFocusItemsOnTap(true);
+            map.getOverlays().add(overlayItensProjeto);
+            map.getOverlays().add(overlayItensProjeto);
+        }
+    }
     private void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
@@ -203,15 +248,7 @@ public class MapaActivity extends AppCompatActivity {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         items.add(new OverlayItem("Você", "Você esta aqui!", new GeoPoint(latitude, longitude)));
 
-//        for (PontoModel ponto : PontosUtils.loadList(getApplicationContext())){
-//            items.add(new OverlayItem(ponto.getCategoria(), ponto.getObs(), new GeoPoint(ponto.getLatitude(), ponto.getLongitude())));
-//        }
-//
-//        for (OverlayItem item : items) {
-//            if ( !item.getTitle().equals("Você")){
-//                item.setMarker(ImageUtils.getIconeDoPonto(item.getTitle(), 32 , 32, getApplicationContext()));
-//            }
-//        }
+
 
 
         mOverlay = new ItemizedOverlayWithFocus<>(items,
