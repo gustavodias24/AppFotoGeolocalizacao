@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjetoModel {
-    int idProjeto;
+    String idProjeto;
     String nomeProjeto, dataProjeto;
     List<PontoModel> listaDePontos = new ArrayList<>();
 
-    public ProjetoModel(int idProjeto, String nomeProjeto, String dataProjeto, List<PontoModel> listaDePontos) {
+    public ProjetoModel(String idProjeto, String nomeProjeto, String dataProjeto, List<PontoModel> listaDePontos) {
         this.idProjeto = idProjeto;
         this.nomeProjeto = nomeProjeto;
         this.dataProjeto = dataProjeto;
         this.listaDePontos = listaDePontos;
     }
 
-    public int getIdProjeto() {
+    public String getIdProjeto() {
         return idProjeto;
     }
 
-    public void setIdProjeto(int idProjeto) {
+    public void setIdProjeto(String idProjeto) {
         this.idProjeto = idProjeto;
     }
 

@@ -111,8 +111,12 @@ public class MapaActivity extends AppCompatActivity {
             startLocationUpdates();
         });
         vbinding.fotoFab.setOnClickListener(view -> {
+            Intent i = new Intent(getApplicationContext(), AdicionarPontoActivity.class);
+            if ( bundle != null){
+                i.putExtra("idProjeto", bundle.getString("idProjeto"));
+            }
+            startActivity(i);
             finish();
-            startActivity(new Intent(getApplicationContext(), AdicionarPontoActivity.class));
         });
         vbinding.fabConfigs.setOnClickListener(view -> {
             finish();
@@ -124,11 +128,13 @@ public class MapaActivity extends AppCompatActivity {
 
             vbinding.fabMeusPontos.setVisibility(View.VISIBLE);
             vbinding.fabMeusPontos.setOnClickListener(view -> {
+                Intent i = new Intent(getApplicationContext(), MeusPontosActivity.class);
+                i.putExtra("idProjeto", bundle.getString("idProjeto"));
+                startActivity(i);
                 finish();
-                startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
             });
 
-            criarPontosDoProejeto(bundle.getInt("idProjeto"));
+            criarPontosDoProejeto(bundle.getString("idProjeto"));
 
         }
 
@@ -139,10 +145,10 @@ public class MapaActivity extends AppCompatActivity {
 
 
     }
-    private  void criarPontosDoProejeto(int id){
+    private  void criarPontosDoProejeto(String id){
         List<PontoModel> listaPontosDoProjeto = new ArrayList<>();
         for (ProjetoModel p : ProjetoUtils.loadList(getApplicationContext())){
-            if ( p.getIdProjeto() == id){
+            if ( p.getIdProjeto().equals( id)){
                 listaPontosDoProjeto.addAll(p.getListaDePontos());
                 break;
             }

@@ -13,15 +13,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusPontosBinding;
+import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
+import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
 public class MeusPontosActivity extends AppCompatActivity {
     private ActivityMeusPontosBinding vbindig;
     private RecyclerView recyclerPontos;
     private AdapterPontos adapterPontos;
+    private Bundle bundle;
+    private List<PontoModel> listaPontos = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +40,28 @@ public class MeusPontosActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Pontos salvos");
+
+        bundle = getIntent().getExtras();
+        if ( bundle != null){
+            listaPontos.addAll(
+                    ProjetoUtils.getProjetoModel(
+                            bundle.getString("idProjeto"),
+                            getApplicationContext()).getListaDePontos()
+            );
+        }
+        else{
+            startActivity(new Intent(getApplicationContext(), AdicionarPontoActivity.class));
+            finish();
+        }
+
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == android.R.id.home){
-            startActivity(new Intent(getApplicationContext(), MapaActivity.class));
+            Intent i = new Intent(getApplicationContext(), MapaActivity.class);
+            i.putExtra("idProjeto", bundle.getString("idProjeto"));
+            startActivity(i);
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -49,7 +72,7 @@ public class MeusPontosActivity extends AppCompatActivity {
         recyclerPontos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerPontos.setHasFixedSize(true);
         recyclerPontos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        adapterPontos = new AdapterPontos(PontosUtils.loadList(getApplicationContext()), getApplicationContext());
+        adapterPontos = new AdapterPontos(listaPontos, getApplicationContext());
         recyclerPontos.setAdapter(adapterPontos);
 
     }
@@ -64,6 +87,7 @@ public class MeusPontosActivity extends AppCompatActivity {
                         Intent i = new Intent(getApplicationContext(), AdicionarPontoActivity.class);
                         i.putExtra("modoExibicao", true);
                         i.putExtra("position", position);
+                        i.putExtra("idProjeto", bundle.getString("idProjeto"));
                         startActivity(i);
                         finish();
                     }

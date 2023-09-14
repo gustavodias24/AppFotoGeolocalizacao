@@ -75,7 +75,9 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     private Bundle b;
     private Boolean modoExibicao = false;
     private int positionPonto;
+    private String idProjeto;
     private String nomeProjeto = "";
+    private ProjetoModel projetoModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,16 +101,22 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         if ( b != null){
             modoExibicao = b.getBoolean("modoExibicao");
             positionPonto = b.getInt("position");
+            idProjeto = b.getString("idProjeto");
+            projetoModel = ProjetoUtils.getProjetoModel(idProjeto, getApplicationContext());
+            nomeProjeto = projetoModel.getNomeProjeto();
+            binding.nomeProjetoText.setText(nomeProjeto);
         }
 
         if ( modoExibicao ){
-            PontoModel pontoModel = PontosUtils.loadList(getApplicationContext()).get(positionPonto);
+            PontoModel pontoModel = projetoModel.getListaDePontos().get(positionPonto);
+            getSupportActionBar().setTitle(projetoModel.getNomeProjeto());
             binding.criarPontoBtn.setVisibility(View.GONE);
             binding.cameraBtn.setVisibility(View.GONE);
 
             binding.obsField.getEditText().setEnabled(false);
             binding.menu.getEditText().setEnabled(false);
-
+            binding.escolherProjeto.setVisibility(View.GONE);
+            binding.nomeProjetoText.setVisibility(View.GONE);
             binding.obsField.getEditText().setText(pontoModel.getObs());
             binding.menu.getEditText().setText(pontoModel.getCategoria());
 
@@ -120,10 +128,10 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Adicionar ponto");
 
         if ( !modoExibicao ){
             configurarMenuCategoria();
+            getSupportActionBar().setTitle("Adicionar ponto");
         }
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -290,7 +298,9 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             if ( !modoExibicao ){
                 irParaOmapaActivity();
             }else{
-                startActivity(new Intent(getApplicationContext(), MeusPontosActivity.class));
+                Intent i = new Intent(getApplicationContext(), MeusPontosActivity.class);
+                i.putExtra("idProjeto", b.getString("idProjeto"));
+                startActivity(i);
                 finish();
             }
         }
@@ -298,7 +308,11 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     }
     
     public void irParaOmapaActivity(){
-        startActivity(new Intent(getApplicationContext(), MapaActivity.class));
+        Intent i = new Intent(getApplicationContext(), MapaActivity.class);
+        if ( b != null){
+            i.putExtra("idProjeto", b.getString("idProjeto"));
+        }
+        startActivity(i);
         ImageUtils.saveList(getApplicationContext(), new ArrayList<>());
         finish();
     }

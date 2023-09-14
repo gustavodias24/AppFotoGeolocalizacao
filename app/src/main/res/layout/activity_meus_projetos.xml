@@ -24,8 +24,8 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:menu_colorNormal="#673AB7"
-        app:menu_colorPressed="#3F2370">
+        app:menu_colorNormal="@color/botao"
+        app:menu_colorPressed="@color/botaoClicado">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_adicionar_projeto"
@@ -33,8 +33,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_border_color_24"
             app:fabSize="mini"
-            app:fab_colorNormal="#673AB7"
-            app:fab_colorPressed="#3F2370"
+            app:fab_colorNormal="@color/botao"
+            app:fab_colorPressed="@color/botaoClicado"
             app:fab_label="Adicionar projeto" />
 
     </com.github.clans.fab.FloatingActionMenu>

@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="201dp"
         android:src="@raw/logo"
-        android:visibility="gone" />
+        android:visibility="visible" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nome_operador_field"
         android:layout_width="match_parent"

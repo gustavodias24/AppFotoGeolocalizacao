@@ -40,4 +40,14 @@ public class ProjetoUtils {
         editor.putString(PROJETO_KEY, carrosJson);
         editor.apply();
     }
+
+    public static ProjetoModel getProjetoModel(String id, Context c){
+        ProjetoModel projeto = null;
+        for ( ProjetoModel p : loadList(c)){
+            if ( p.getIdProjeto().equals(id)){
+                projeto = p ;
+            }
+        }
+        return projeto;
+    }
 }

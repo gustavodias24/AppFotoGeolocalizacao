@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import benicio.soluces.aplicativotestebencio.R;
@@ -110,7 +111,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
                 List<ProjetoModel> listaProjetoAntiga = ProjetoUtils.loadList(getApplicationContext());
 
                 ProjetoModel projetoModel = new ProjetoModel(
-                        listaProjetoAntiga.isEmpty() ? 0 : listaProjetoAntiga.size() + 1,
+                        UUID.randomUUID().toString(),
                         titulo,
                         data,
                         new ArrayList<>()
@@ -185,6 +186,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
                 AlertDialog.Builder b = new AlertDialog.Builder(MeusProjetosActivity.this);
+                b.setCancelable(false);
                 b.setMessage(String.format(
                         "Tem certeza que deseja deleta %s?", listaProjetos.get(viewHolder.getAdapterPosition()).getNomeProjeto()
                 ));
@@ -197,7 +199,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
                     atualizarLista();
                     dialogDelete.dismiss();
                 });
-                b.setNegativeButton("Não", null);
+                b.setNegativeButton("Não", (d, i) -> {adapterProjetos.notifyDataSetChanged(); dialogDelete.dismiss();});
 
                 dialogDelete = b.create();
                 dialogDelete.show();
