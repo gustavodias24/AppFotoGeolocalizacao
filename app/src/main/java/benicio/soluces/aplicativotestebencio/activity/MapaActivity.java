@@ -9,10 +9,12 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -42,10 +44,16 @@ import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
+import benicio.soluces.aplicativotestebencio.service.ServiceNotificacoes;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapaActivity extends AppCompatActivity {
     private ItemizedOverlayWithFocus<OverlayItem> mOverlay;
@@ -60,14 +68,29 @@ public class MapaActivity extends AppCompatActivity {
     private FloatingActionButton fab_onde_estou;
     private Dialog dialogCarregamento;
     private Bundle bundle;
-
+    private SharedPreferences sharedPreferencesNovidade;
+    private SharedPreferences.Editor editorNovidade;
+    private int qtdNovidadeNova = 0 ;
+    private Retrofit retrofit;
+    private ServiceNotificacoes serviceNotificacao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         vbinding = ActivityMapaBinding.inflate(getLayoutInflater());
         setContentView(vbinding.getRoot());
 
+        configurarRetrofit();
         bundle = getIntent().getExtras();
+
+        sharedPreferencesNovidade = getSharedPreferences("novidades", MODE_PRIVATE);
+        editorNovidade = sharedPreferencesNovidade.edit();
+
+        vbinding.fabNoficacoes.setOnClickListener( view -> {
+            editorNovidade.putInt("qtdNovidades", qtdNovidadeNova);
+            editorNovidade.apply();
+            Intent i = new Intent(getApplicationContext(), NotificacoesActivity.class);
+            startActivity(i);
+        });
 
         dialogCarregamento = RetrofitUtils.criarDialogCarregando(MapaActivity.this);
         dialogCarregamento.show();
@@ -236,6 +259,45 @@ public class MapaActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         map.onResume();
+        verificarNovidades();
+    }
+
+    public void configurarRetrofit(){
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://comunicao-clientes-kaizen.vercel.app/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        serviceNotificacao = retrofit.create(ServiceNotificacoes.class);
+
+    }
+    public void verificarNovidades(){
+        serviceNotificacao.recuperaQtdPostagem().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if ( response.isSuccessful() ){
+                    int qtdNovidadesAtual = sharedPreferencesNovidade.getInt("qtdNovidades", 0 );
+                    qtdNovidadeNova = Integer.parseInt(response.body());
+
+                    int count = qtdNovidadeNova - qtdNovidadesAtual;
+                    if ( count < 0 ){
+                        editorNovidade.putInt("qtdNovidades", qtdNovidadeNova );
+                        editorNovidade.apply();
+                        count = 0;
+                    }
+                    vbinding.fabNoficacoes.setCount(
+                            count
+                    );
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(MapaActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     @Override
     public void onPause() {

@@ -31,6 +31,8 @@ android {
 }
 
 dependencies {
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.github.andremion:counterfab:1.0.1")
     implementation("com.github.clans:fab:1.6.4")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.osmdroid:osmdroid-android:6.1.6")
