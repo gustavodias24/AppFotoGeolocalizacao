@@ -3,6 +3,7 @@ package benicio.soluces.aplicativotestebencio.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,12 +49,12 @@ public class NotificacoesActivity extends AppCompatActivity {
         setContentView(notificacoesBinding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        dialogCarregando = RetrofitUtils.criarDialogCarregando(NotificacoesActivity.this);
+        dialogCarregando = RetrofitUtils.criarDialogCarregando(this, this);
 
         r = notificacoesBinding.recyclerPostagens;
         r.setHasFixedSize(true);
         r.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//        r.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+        r.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
         adapter = new AdapterPostagem(lista, getApplicationContext());
         r.setAdapter(adapter);
 

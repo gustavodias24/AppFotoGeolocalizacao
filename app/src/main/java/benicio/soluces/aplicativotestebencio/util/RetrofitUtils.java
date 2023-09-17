@@ -3,6 +3,7 @@ package benicio.soluces.aplicativotestebencio.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 
 import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregamentoBinding;
 import benicio.soluces.aplicativotestebencio.service.ServiceNotificacoes;
@@ -21,8 +22,8 @@ public class RetrofitUtils {
     public static ServiceNotificacoes createServiceNotificaceos(Retrofit retrofit){
         return retrofit.create(ServiceNotificacoes.class);
     }
-    public static Dialog criarDialogCarregando(Activity a){
-        AlertDialog.Builder b = new AlertDialog.Builder(a);
+    public static Dialog criarDialogCarregando(Context c, Activity a){
+        AlertDialog.Builder b = new AlertDialog.Builder(c);
         b.setCancelable(false);
         b.setView(LayoutCarregamentoBinding.inflate(a.getLayoutInflater()).getRoot());
         return b.create();
