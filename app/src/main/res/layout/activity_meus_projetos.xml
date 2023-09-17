@@ -6,15 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".activity.MeusProjetosActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reycler_projetos"
-        android:layout_width="409dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="13dp"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Precione o botão para exportar."
+            android:textColor="#888888" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reycler_projetos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp" />
+
+    </LinearLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menu_opcoes"
@@ -50,7 +67,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/reycler_projetos"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

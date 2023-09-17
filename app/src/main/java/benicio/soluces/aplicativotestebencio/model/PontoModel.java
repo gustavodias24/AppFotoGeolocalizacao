@@ -1,11 +1,10 @@
 package benicio.soluces.aplicativotestebencio.model;
 
-import android.net.Uri;
-
 import java.util.List;
 
 public class PontoModel {
 
+    // essa lista é uma lista de Uri que convertir para String
     List<String> images;
     String categoria, obs, operador;
     Double latitude, longitude;

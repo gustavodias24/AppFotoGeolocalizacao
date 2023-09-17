@@ -148,7 +148,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
         recyclerProjetos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerProjetos.setHasFixedSize(true);
         recyclerProjetos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        adapterProjetos = new AdapterProjetos(listaProjetos, getApplicationContext());
+        adapterProjetos = new AdapterProjetos(listaProjetos, getApplicationContext(), this, true);
         recyclerProjetos.setAdapter(adapterProjetos);
     }
 

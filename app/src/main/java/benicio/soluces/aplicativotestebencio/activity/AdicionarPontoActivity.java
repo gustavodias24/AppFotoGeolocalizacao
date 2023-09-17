@@ -212,7 +212,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     }
     public Dialog criarDialogVerProjetos(){
         AlertDialog.Builder b = new AlertDialog.Builder(AdicionarPontoActivity.this);
-
+        b.setMessage("Projetos disponíveis:");
         b.setNegativeButton("Fechar", null);
         LayoutRecyclerBinding projetosBinding = LayoutRecyclerBinding.inflate(getLayoutInflater());
 
@@ -231,7 +231,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         recylerProjetos.setHasFixedSize(true);
         recylerProjetos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
         recylerProjetos.setAdapter(
-                new AdapterProjetos(ProjetoUtils.loadList(getApplicationContext()), getApplicationContext())
+                new AdapterProjetos(ProjetoUtils.loadList(getApplicationContext()), getApplicationContext(), this, false)
         );
 
         recylerProjetos.addOnItemTouchListener(new RecyclerItemClickListener(

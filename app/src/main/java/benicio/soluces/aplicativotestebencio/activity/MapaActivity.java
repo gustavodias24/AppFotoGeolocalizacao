@@ -92,7 +92,7 @@ public class MapaActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-        dialogCarregamento = RetrofitUtils.criarDialogCarregando(MapaActivity.this);
+        dialogCarregamento = RetrofitUtils.criarDialogCarregando(this, this);
         dialogCarregamento.show();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

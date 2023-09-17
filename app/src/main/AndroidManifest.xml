@@ -29,6 +29,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="benicio.soluces.aplicativotestebencio.provider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+
+        </provider>
+
         <activity
             android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
             android:name=".activity.NotificacoesActivity"

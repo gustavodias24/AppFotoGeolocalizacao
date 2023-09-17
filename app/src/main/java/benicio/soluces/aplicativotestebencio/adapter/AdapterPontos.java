@@ -34,6 +34,7 @@ public class AdapterPontos extends RecyclerView.Adapter<AdapterPontos.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PontoModel ponto = lista.get(position);
+
         holder.infos.setText(String.format("%s\nLat: %f Long: %f", ponto.getObs(), ponto.getLatitude(), ponto.getLongitude()));
         holder.icone.setImageDrawable(ImageUtils.getIconeDoPonto(
                 ponto.getCategoria(),
