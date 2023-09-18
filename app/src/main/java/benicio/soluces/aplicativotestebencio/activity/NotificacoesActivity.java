@@ -32,7 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NotificacoesActivity extends AppCompatActivity {
 
     private ActivityNotificacoesBinding notificacoesBinding;
-    private Dialog dialogCarregando;
+//    private Dialog dialogCarregando;
 
     private RecyclerView r;
     private AdapterPostagem adapter;
@@ -49,7 +49,7 @@ public class NotificacoesActivity extends AppCompatActivity {
         setContentView(notificacoesBinding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        dialogCarregando = RetrofitUtils.criarDialogCarregando(this, this);
+//        dialogCarregando = RetrofitUtils.criarDialogCarregando(this, this);
 
         r = notificacoesBinding.recyclerPostagens;
         r.setHasFixedSize(true);
@@ -91,11 +91,11 @@ public class NotificacoesActivity extends AppCompatActivity {
 
     public void carregarPostagem(){
         lista.clear();
-        dialogCarregando.show();
+//        dialogCarregando.show();
         service.recuperarPostagens().enqueue(new Callback<List<PostagemModel>>() {
             @Override
             public void onResponse(Call<List<PostagemModel>> call, Response<List<PostagemModel>> response) {
-                dialogCarregando.dismiss();
+//                dialogCarregando.dismiss();
                 if ( response.isSuccessful() ){
                     lista.addAll(response.body());
                     Collections.reverse(lista);
@@ -110,7 +110,7 @@ public class NotificacoesActivity extends AppCompatActivity {
             public void onFailure(Call<List<PostagemModel>> call, Throwable t) {
                 Toast.makeText(NotificacoesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("bucetinha",  t.getMessage());
-                dialogCarregando.dismiss();
+//                dialogCarregando.dismiss();
             }
         });
     }

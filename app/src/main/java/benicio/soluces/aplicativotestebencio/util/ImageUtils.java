@@ -3,17 +3,21 @@ package benicio.soluces.aplicativotestebencio.util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -35,6 +39,7 @@ public class ImageUtils {
             return Base64.encodeToString(bytes, Base64.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d("imageUtils", e.getMessage());
         }
         return "";
     }
@@ -99,5 +104,26 @@ public class ImageUtils {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         Bitmap bitmapRedimensionado = Bitmap.createScaledBitmap(bitmap, larguraEmPixels, alturaEmPixels, false);
         return new BitmapDrawable(c.getResources(), bitmapRedimensionado);
+    }
+
+    public static String convertDrawableToBase64(Resources resources, Drawable drawable) {
+        try {
+            // Converte o Drawable em um Bitmap
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+
+            // Converte o Bitmap em um array de bytes
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+            // Converte o array de bytes em uma string Base64
+            String base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+            return "data:image/png;base64," + base64Image;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
