@@ -1,11 +1,13 @@
 package benicio.soluces.aplicativotestebencio.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PontoModel {
 
     // essa lista é uma lista de Uri que convertir para String
-    List<String> images;
+    List<String> images = new ArrayList<>();
+    List<String> imagesLink = new ArrayList<>();
     String categoria, obs, operador;
     Double latitude, longitude;
 
@@ -19,6 +21,14 @@ public class PontoModel {
     }
 
     public PontoModel() {
+    }
+
+    public List<String> getImagesLink() {
+        return imagesLink;
+    }
+
+    public void setImagesLink(List<String> imagesLink) {
+        this.imagesLink = imagesLink;
     }
 
     public List<String> getImages() {

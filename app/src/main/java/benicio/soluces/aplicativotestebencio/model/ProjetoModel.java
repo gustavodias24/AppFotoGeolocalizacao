@@ -1,29 +1,19 @@
 package benicio.soluces.aplicativotestebencio.model;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
 
-import com.andremion.counterfab.BuildConfig;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -99,7 +89,7 @@ public class ProjetoModel {
                     ponto.getObs(),
                     ponto.getLongitude().toString(),
                     ponto.getLatitude().toString(),
-                    ponto.getImages(),
+                    ponto.getImagesLink(),
                     context
             ));
         }
@@ -247,10 +237,10 @@ public class ProjetoModel {
                 .append("\n\t<styleUrl>#__managed_style_"+stylemapId+"</styleUrl>")
                 .append("\n\t<gx:Carousel>");
 
-                for (String imageUri : images){
+                for (String imageLink : images){
                     xmlStringBuilder.append("\n\t\t<gx:Image kml:id=\"embedded_image_03AE9FBE172BDD5C899D_0\">")
                     .append("\n\t\t\t<gx:ImageUrl>"+
-                            imageUri
+                            imageLink
                             +"</gx:ImageUrl>")
                     .append("\n\t\t</gx:Image>");
                 }

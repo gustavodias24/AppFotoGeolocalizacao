@@ -5,25 +5,28 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.R;
+import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.model.ResponseIngurModel;
 import benicio.soluces.aplicativotestebencio.service.ServiceIngur;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
+import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -43,7 +46,8 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
     Retrofit retrofitIngur = RetrofitUtils.createRetrofitIngur();
     ServiceIngur serviceIngur = RetrofitUtils.createServiceIngur(retrofitIngur);
 
-    private static final String CLIENT_ID = "c3585d73dc8693b4d1ea33beb0449c704b54dac7";
+    private static final String TOKEN = "c3585d73dc8693b4d1ea33beb0449c704b54dac7";
+    int quantidadeDeLinkGerado = 0;
 
     public AdapterProjetos(List<ProjetoModel> lista, Context c, Activity a, Boolean exibirBtn) {
         this.lista = lista;
@@ -70,27 +74,34 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
         b.setMessage("Exportar para KMZ/KML ?");
         b.setNegativeButton("Não", null);
         b.setPositiveButton("Sim", (d, i) -> {
+            quantidadeDeLinkGerado = 0;
+            int quantidadeTotalDeImages = 0;
+            for(PontoModel ponto: projetoModel.getListaDePontos()){
+                List<String> listaDeImageUri = ponto.getImages() == null ? new ArrayList<>() : ponto.getImages();
+                for ( String imageString : listaDeImageUri){
+                    quantidadeTotalDeImages++;
+                }
+            }
 
-            File imageFile = ImageUtils.uriToFile(c, Uri.parse(projetoModel.getListaDePontos().get(0).getImages().get(0)));
-            RequestBody description = RequestBody.create(MediaType.parse("text/plain"), "Image Description");
-            RequestBody image = RequestBody.create(MediaType.parse("image/png"), imageFile);
-            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), image);
+            int positionPonto = 0;
+            for (PontoModel ponto : projetoModel.getListaDePontos()){
 
-            serviceIngur.postarImage("Bearer " + CLIENT_ID, description, imagePart).enqueue(new Callback<ResponseIngurModel>() {
-                @Override
-                public void onResponse(Call<ResponseIngurModel> call, Response<ResponseIngurModel> response) {
-                    if ( response.isSuccessful() ){
-                        Log.d("uploadImage", response.body().getData().getLink());
+                // isso evita criar as mesmas imagens
+                List<String> listaDeImageLink = ponto.getImagesLink() == null ? new ArrayList<>() : ponto.getImagesLink();
+                List<String> listaDeImageUri = ponto.getImages() == null ? new ArrayList<>() : ponto.getImages();
+                if ( listaDeImageLink.size() != listaDeImageUri.size()){
+
+                    for( String uriImage : ponto.getImages()){
+                        returnImagemNoIngu(positionPonto, Uri.parse(uriImage), position, quantidadeTotalDeImages);
                     }
-                    Log.d("uploadImage", response.message());
+
+                }else{
+                    projetoModel.gerarArquivoKML(a);
                 }
 
-                @Override
-                public void onFailure(Call<ResponseIngurModel> call, Throwable t) {
-                    Log.d("uploadImage", t.getMessage());
-                }
-            });
-//            projetoModel.gerarArquivoKML(a);
+                positionPonto ++;
+            }
+
         });
 
         d = b.create();
@@ -119,6 +130,44 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
             img = itemView.findViewById(R.id.icone_ponto);
             infos = itemView.findViewById(R.id.text_infos);
             exportarBtn = itemView.findViewById(R.id.exportart_btn);
+        }
+    }
+
+    public void returnImagemNoIngu(int positionPonto,Uri uriImage, int position, int quantidadeTotalDeImages){
+
+        File imageFile = ImageUtils.uriToFile(c, uriImage);
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"), "Image Description");
+        RequestBody image = RequestBody.create(MediaType.parse("image/png"), imageFile);
+        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), image);
+
+        serviceIngur.postarImage("Bearer " + TOKEN, description, imagePart).enqueue(new Callback<ResponseIngurModel>() {
+            @Override
+            public void onResponse(Call<ResponseIngurModel> call, Response<ResponseIngurModel> response) {
+                if ( response.isSuccessful() ){
+                    lista.get(position).getListaDePontos().get(positionPonto).getImagesLink().add(response.body().getData().getLink());
+                    quantidadeDeLinkGerado++;
+                }else{
+                    quantidadeDeLinkGerado++;
+                    lista.get(position).getListaDePontos().get(positionPonto).getImagesLink().add("");
+                }
+                verificarTermino(quantidadeTotalDeImages, quantidadeDeLinkGerado, position);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseIngurModel> call, Throwable t) {
+                Toast.makeText(c, t.getMessage(), Toast.LENGTH_SHORT).show();
+                lista.get(position).getListaDePontos().get(positionPonto).getImagesLink().add("");
+                quantidadeDeLinkGerado++;
+                verificarTermino(quantidadeTotalDeImages, quantidadeDeLinkGerado, position);
+            }
+        });
+    }
+    public void verificarTermino(int quatidadeTotalDeImages, int quatidadeProcessada, int position){
+        if (quatidadeTotalDeImages == quatidadeProcessada){
+            // escreve por cima o novo projetoModel com as imagens link
+            ProjetoUtils.saveList(lista, c);
+
+            lista.get(position).gerarArquivoKML(a);
         }
     }
 }
