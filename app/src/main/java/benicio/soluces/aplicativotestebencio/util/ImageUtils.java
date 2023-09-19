@@ -72,11 +72,17 @@ public class ImageUtils {
 
 
         @SuppressLint("ResourceType") Drawable arvore = ContextCompat.getDrawable(c, R.raw.arvore);
+
         @SuppressLint("ResourceType") Drawable erosao = ContextCompat.getDrawable(c, R.raw.erosao);
+
         @SuppressLint("ResourceType") Drawable estacaoenergia = ContextCompat.getDrawable(c, R.raw.estacaoenergia);
+
         @SuppressLint("ResourceType") Drawable outros = ContextCompat.getDrawable(c, R.raw.outros);
+
         @SuppressLint("ResourceType") Drawable poste = ContextCompat.getDrawable(c, R.raw.poste);
+
         @SuppressLint("ResourceType") Drawable rocada = ContextCompat.getDrawable(c, R.raw.rocada);
+
         Drawable drawable = null;
 
         switch (categoria) {
@@ -106,24 +112,43 @@ public class ImageUtils {
         return new BitmapDrawable(c.getResources(), bitmapRedimensionado);
     }
 
-    public static String convertDrawableToBase64(Resources resources, Drawable drawable) {
-        try {
-            // Converte o Drawable em um Bitmap
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            Bitmap bitmap = bitmapDrawable.getBitmap();
+    public static String getLinkIconeDoPonto(String categoria, Context c) {
 
-            // Converte o Bitmap em um array de bytes
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
 
-            // Converte o array de bytes em uma string Base64
-            String base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String arvoreLink = "https://i.imgur.com/qUYL4ds.png";
 
-            return "data:image/png;base64," + base64Image;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        String erosaoLink = "https://i.imgur.com/QCJkCBv.png";
+
+        String estacaoLink = "https://i.imgur.com/4gTzogd.png";
+
+        String outrosLink = "https://i.imgur.com/9FqF2Lu.png";
+
+        String posteLink = "https://i.imgur.com/Wa8Eee3.png";
+
+        String rocadaLink = "https://i.imgur.com/Rd6koWY.png";
+
+        String drawable = null;
+
+        switch (categoria) {
+            case "árvore":
+                drawable = arvoreLink;
+                break;
+            case "poste":
+                drawable = posteLink;
+                break;
+            case "área de roçada":
+                drawable = rocadaLink;
+                break;
+            case "subestação de energia":
+                drawable = estacaoLink;
+                break;
+            case "erosão":
+                drawable = erosaoLink;
+                break;
+            case "outros":
+                drawable = outrosLink;
+                break;
         }
+        return drawable;
     }
 }

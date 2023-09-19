@@ -1,10 +1,13 @@
 package benicio.soluces.aplicativotestebencio.model;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
@@ -28,6 +31,7 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 
 
@@ -157,13 +161,6 @@ public class ProjetoModel {
         context.startActivity(intent);
     }
 
-    public String getIconeBase64(Context c, String categoria){
-        return ImageUtils.convertDrawableToBase64(
-                c.getResources(),
-                ImageUtils.getIconeDoPonto(categoria, 32, 32, c)
-                );
-    }
-
     public String returnCascadingStyle(String highlightId,String normalId, String categoria, Context c){
         StringBuilder xmlStringBuilder = new StringBuilder();
 
@@ -173,7 +170,7 @@ public class ProjetoModel {
         xmlStringBuilder.append("        <IconStyle>\n");
         xmlStringBuilder.append("            <scale>1.2</scale>\n");
         xmlStringBuilder.append("            <Icon>\n");
-        xmlStringBuilder.append("                <href>"+ getIconeBase64(c, categoria) +"</href>\n");
+        xmlStringBuilder.append("                <href>"+ ImageUtils.getLinkIconeDoPonto(categoria, c) + "</href>");
         xmlStringBuilder.append("            </Icon>\n");
         xmlStringBuilder.append("        </IconStyle>\n");
         xmlStringBuilder.append("        <LabelStyle>\n");
@@ -195,7 +192,7 @@ public class ProjetoModel {
         xmlStringBuilder.append("    <Style>\n");
         xmlStringBuilder.append("        <IconStyle>\n");
         xmlStringBuilder.append("            <Icon>\n");
-        xmlStringBuilder.append("                <href>"+ getIconeBase64(c, categoria) +"</href>\n");
+        xmlStringBuilder.append("                 <href>"+ ImageUtils.getLinkIconeDoPonto(categoria, c)  + "</href>");
         xmlStringBuilder.append("            </Icon>\n");
         xmlStringBuilder.append("        </IconStyle>\n");
         xmlStringBuilder.append("        <LabelStyle>\n");
@@ -253,7 +250,7 @@ public class ProjetoModel {
                 for (String imageUri : images){
                     xmlStringBuilder.append("\n\t\t<gx:Image kml:id=\"embedded_image_03AE9FBE172BDD5C899D_0\">")
                     .append("\n\t\t\t<gx:ImageUrl>"+
-                            "data:image/png;base64,"+ ImageUtils.imageToBase64(Uri.parse(imageUri), c)
+                            imageUri
                             +"</gx:ImageUrl>")
                     .append("\n\t\t</gx:Image>");
                 }
@@ -267,4 +264,5 @@ public class ProjetoModel {
 
         return xmlStringBuilder.toString();
     }
+
 }

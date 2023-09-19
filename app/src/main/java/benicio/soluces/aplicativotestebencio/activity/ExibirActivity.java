@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -119,13 +120,14 @@ public class ExibirActivity extends AppCompatActivity{
                     v1.setDrawingCacheEnabled(false);
 
                     File externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                    File imageFile = new File(externalFilesDir, UUID.randomUUID().toString() + ".jpg");
+                    File imageFile = new File(externalFilesDir, UUID.randomUUID().toString() + ".png");
 
                     FileOutputStream outputStream = new FileOutputStream(imageFile);
-                    int quality = 100;
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+                    int quality = 70;
+                    bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
                     outputStream.flush();
                     outputStream.close();
+
 
                     List<String> listaAntiga = ImageUtils.loadList(getApplicationContext());
                     listaAntiga.add(Uri.fromFile(imageFile).toString());
@@ -200,12 +202,6 @@ public class ExibirActivity extends AppCompatActivity{
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             binding.imageView.setImageURI(imageUri);
-
-//            Bundle extras = data.getExtras();
-//            if (extras != null) {
-//                Bitmap imageBitmap = (Bitmap) extras.get("data");
-//                binding.imageView.setImageBitmap(imageBitmap);
-//            }
         }
 
     }
