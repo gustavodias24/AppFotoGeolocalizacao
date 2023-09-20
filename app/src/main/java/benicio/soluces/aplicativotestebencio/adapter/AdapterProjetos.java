@@ -5,11 +5,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.R;
+import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregamentoBinding;
+import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregandoImageBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.model.ResponseIngurModel;
@@ -45,6 +50,8 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
     Boolean exibirBtn;
     Retrofit retrofitIngur = RetrofitUtils.createRetrofitIngur();
     ServiceIngur serviceIngur = RetrofitUtils.createServiceIngur(retrofitIngur);
+    Dialog dialogCarregamento;
+    ProgressBar progressImage;
 
     private static final String TOKEN = "c3585d73dc8693b4d1ea33beb0449c704b54dac7";
     int quantidadeDeLinkGerado = 0;
@@ -54,6 +61,7 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
         this.c = c;
         this.a = a;
         this.exibirBtn = exibirBtn;
+        this.dialogCarregamento = criarDialogCarregamento();
     }
 
     @NonNull
@@ -74,6 +82,9 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
         b.setMessage("Exportar para KMZ/KML ?");
         b.setNegativeButton("Não", null);
         b.setPositiveButton("Sim", (d, i) -> {
+            dialogCarregamento.show();
+            progressImage.setProgress(0);
+
             quantidadeDeLinkGerado = 0;
             int quantidadeTotalDeImages = 0;
             for(PontoModel ponto: projetoModel.getListaDePontos()){
@@ -83,23 +94,31 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
                 }
             }
 
+            progressImage.setMax(quantidadeTotalDeImages);
+
             int positionPonto = 0;
-            for (PontoModel ponto : projetoModel.getListaDePontos()){
+            if ( !projetoModel.getListaDePontos().isEmpty() ) {
+                for (PontoModel ponto : projetoModel.getListaDePontos()) {
 
-                // isso evita criar as mesmas imagens
-                List<String> listaDeImageLink = ponto.getImagesLink() == null ? new ArrayList<>() : ponto.getImagesLink();
-                List<String> listaDeImageUri = ponto.getImages() == null ? new ArrayList<>() : ponto.getImages();
-                if ( listaDeImageLink.size() != listaDeImageUri.size()){
+                    // isso evita criar as mesmas imagens
+                    List<String> listaDeImageLink = ponto.getImagesLink() == null ? new ArrayList<>() : ponto.getImagesLink();
+                    List<String> listaDeImageUri = ponto.getImages() == null ? new ArrayList<>() : ponto.getImages();
+                    if (listaDeImageLink.size() != listaDeImageUri.size()) {
 
-                    for( String uriImage : ponto.getImages()){
-                        returnImagemNoIngu(positionPonto, Uri.parse(uriImage), position, quantidadeTotalDeImages);
+                        for (String uriImage : ponto.getImages()) {
+                            returnImagemNoIngu(positionPonto, Uri.parse(uriImage), position, quantidadeTotalDeImages);
+                        }
+
+                    } else {
+                        dialogCarregamento.dismiss();
+                        projetoModel.gerarArquivoKML(a);
                     }
 
-                }else{
-                    projetoModel.gerarArquivoKML(a);
+                    positionPonto++;
                 }
-
-                positionPonto ++;
+            }else{
+                dialogCarregamento.dismiss();
+                Toast.makeText(c, "Esse projeto está vazio!", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -124,7 +143,7 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
         TextView infos;
-        Button exportarBtn;
+        ImageButton exportarBtn;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.icone_ponto);
@@ -144,10 +163,12 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
             @Override
             public void onResponse(Call<ResponseIngurModel> call, Response<ResponseIngurModel> response) {
                 if ( response.isSuccessful() ){
+                    progressImage.setProgress( progressImage.getProgress() + 1);
                     lista.get(position).getListaDePontos().get(positionPonto).getImagesLink().add(response.body().getData().getLink());
                     quantidadeDeLinkGerado++;
                 }else{
                     quantidadeDeLinkGerado++;
+                    progressImage.setProgress( progressImage.getProgress() + 1);
                     lista.get(position).getListaDePontos().get(positionPonto).getImagesLink().add("");
                 }
                 verificarTermino(quantidadeTotalDeImages, quantidadeDeLinkGerado, position);
@@ -156,6 +177,7 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
             @Override
             public void onFailure(Call<ResponseIngurModel> call, Throwable t) {
                 Toast.makeText(c, t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressImage.setProgress( progressImage.getProgress() + 1);
                 lista.get(position).getListaDePontos().get(positionPonto).getImagesLink().add("");
                 quantidadeDeLinkGerado++;
                 verificarTermino(quantidadeTotalDeImages, quantidadeDeLinkGerado, position);
@@ -164,10 +186,20 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
     }
     public void verificarTermino(int quatidadeTotalDeImages, int quatidadeProcessada, int position){
         if (quatidadeTotalDeImages == quatidadeProcessada){
+            dialogCarregamento.dismiss();
             // escreve por cima o novo projetoModel com as imagens link
             ProjetoUtils.saveList(lista, c);
 
             lista.get(position).gerarArquivoKML(a);
         }
+    }
+
+    private Dialog criarDialogCarregamento(){
+        AlertDialog.Builder b = new AlertDialog.Builder(a);
+        b.setCancelable(false);
+        LayoutCarregandoImageBinding carregandoImageBinding = LayoutCarregandoImageBinding.inflate(a.getLayoutInflater());
+        progressImage = carregandoImageBinding.carregamentoImageProgress;
+        b.setView(carregandoImageBinding.getRoot());
+        return b.create();
     }
 }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -16,6 +17,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterProjetos;
@@ -47,6 +51,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
     private Dialog dialogCriarProjeto;
     private String dataAtual;
     private Dialog dialogDelete;
+    private Boolean isSearching= false;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -86,6 +91,40 @@ public class MeusProjetosActivity extends AppCompatActivity {
         });
 
         configuarAcaoProjetos();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_pesquisa, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Pesquisar por nome");
+        searchView.setOnCloseListener(() -> {
+            atualizarLista();
+            isSearching = false;
+            return false;
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                isSearching = true;
+                listaProjetos.clear();
+                listaProjetos.addAll(
+                        ProjetoUtils.loadList(getApplicationContext()).stream().filter( projetoModel -> projetoModel.getNomeProjeto().contains(newText) ).collect(Collectors.toList())
+                );
+                adapterProjetos.notifyDataSetChanged();
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -191,11 +230,14 @@ public class MeusProjetosActivity extends AppCompatActivity {
                         "Tem certeza que deseja deleta %s?", listaProjetos.get(viewHolder.getAdapterPosition()).getNomeProjeto()
                 ));
                 b.setPositiveButton("Sim", (dialogInterface, i) -> {
+                    if ( !isSearching ){
+                        listaProjetos.remove(viewHolder.getAdapterPosition());
+                        ProjetoUtils.saveList(listaProjetos, getApplicationContext());
+                        Toast.makeText(MeusProjetosActivity.this, "Projeto deletado com sucesso!", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MeusProjetosActivity.this, "Impossível remover pesquisando projetos!", Toast.LENGTH_SHORT).show();
+                    }
 
-                    listaProjetos.remove(viewHolder.getAdapterPosition());
-                    ProjetoUtils.saveList(listaProjetos, getApplicationContext());
-
-                    Toast.makeText(MeusProjetosActivity.this, "Projeto deletado com sucesso!", Toast.LENGTH_SHORT).show();
                     atualizarLista();
                     dialogDelete.dismiss();
                 });
