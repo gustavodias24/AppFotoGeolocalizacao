@@ -33,12 +33,12 @@ public class AdapterPontos extends RecyclerView.Adapter<AdapterPontos.MyViewHold
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_pontos, parent, false));
     }
-    @SuppressLint("ResourceType")
+    @SuppressLint({"ResourceType", "DefaultLocale"})
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PontoModel ponto = lista.get(position);
 
-        holder.infos.setText(String.format("%s\nLat: %f Long: %f", ponto.getObs(), ponto.getLatitude(), ponto.getLongitude()));
+        holder.infos.setText(String.format("%s %s\n", ponto.getData(),ponto.getObs()));
         Picasso.get().load(ImageUtils.getLinkIconeDoPonto(ponto.getCategoria(), c)).into(holder.icone);
 
     }

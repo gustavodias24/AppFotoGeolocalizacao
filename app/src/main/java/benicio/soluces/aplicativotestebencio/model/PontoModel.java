@@ -9,9 +9,12 @@ public class PontoModel {
     List<String> images = new ArrayList<>();
     List<String> imagesLink = new ArrayList<>();
     String categoria, obs, operador;
+    String data = "";
     Double latitude, longitude;
 
-    public PontoModel(List<String> images, String categoria, String obs, String operador, Double latitude, Double longitude) {
+
+    public PontoModel(String data,List<String> images, String categoria, String obs, String operador, Double latitude, Double longitude) {
+        this.data = data;
         this.images = images;
         this.categoria = categoria;
         this.obs = obs;
@@ -21,6 +24,14 @@ public class PontoModel {
     }
 
     public PontoModel() {
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public List<String> getImagesLink() {

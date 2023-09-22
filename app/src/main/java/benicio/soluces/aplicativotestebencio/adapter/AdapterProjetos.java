@@ -1,5 +1,6 @@
 package benicio.soluces.aplicativotestebencio.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,10 +73,11 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_pontos, parent, false));
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ProjetoModel projetoModel = lista.get(position);
-        holder.img.setVisibility(View.GONE);
+        Picasso.get().load(R.raw.iconproject).into(holder.img);
         if ( exibirBtn ){
             holder.exportarBtn.setVisibility(View.VISIBLE);
         }

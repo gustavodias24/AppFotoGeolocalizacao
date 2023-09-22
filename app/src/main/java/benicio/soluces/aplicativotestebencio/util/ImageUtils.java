@@ -85,12 +85,16 @@ public class ImageUtils {
         @SuppressLint("ResourceType") Drawable poste = ContextCompat.getDrawable(c, R.raw.poste);
 
         @SuppressLint("ResourceType") Drawable rocada = ContextCompat.getDrawable(c, R.raw.rocada);
+        @SuppressLint("ResourceType") Drawable ferruge = ContextCompat.getDrawable(c, R.raw.rusticon);
 
         Drawable drawable = null;
 
         switch (categoria) {
             case "árvore":
                 drawable = arvore;
+                break;
+            case "ferrugem":
+                drawable = ferruge;
                 break;
             case "poste":
                 drawable = poste;
@@ -117,6 +121,7 @@ public class ImageUtils {
 
     public static String getLinkIconeDoPonto(String categoria, Context c) {
 
+        String rustLink =   "https://i.imgur.com/bkrMxT1.png";
 
         String arvoreLink = "https://i.imgur.com/7hhYXgu.png";
 
@@ -133,6 +138,9 @@ public class ImageUtils {
         String drawable = null;
 
         switch (categoria) {
+            case "ferrugem":
+                drawable = rustLink;
+                break;
             case "árvore":
                 drawable = arvoreLink;
                 break;

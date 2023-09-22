@@ -40,8 +40,11 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import benicio.soluces.aplicativotestebencio.adapter.AdapterCategorias;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
@@ -208,9 +211,11 @@ public class AdicionarPontoActivity extends AppCompatActivity {
                     pos++;
                 }
 
+                String data = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
                 assert projetoModel != null;
                 projetoModel.getListaDePontos().add(
-                        new PontoModel(listaDeFotos, categoria, obs, operador, latitude, longitude)
+                        new PontoModel( data,listaDeFotos, categoria, obs, operador, latitude, longitude)
                 );
 
                 listaAntiga.remove(pos);
@@ -237,6 +242,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         recyclerCategoria.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
         List<CategoriaModel> lista = new ArrayList<>();
         lista.add(new CategoriaModel("árvore", "Árvore"));
+        lista.add(new CategoriaModel("ferrugem", "Ferrugem"));
         lista.add(new CategoriaModel("poste", "Poste"));
         lista.add(new CategoriaModel("área de roçada", "Área de roçada"));
         lista.add(new CategoriaModel("subestação de energia", "Subestação de energia"));
@@ -327,7 +333,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     }
 
     private void configurarMenuCategoria (){
-        String[] items = {"poste", "árvore", "área de roçada", "subestação de energia", "erosão", "outros"};
+        String[] items = {"poste", "árvore", "área de roçada", "subestação de energia", "erosão", "outros", "ferrugem"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
 

@@ -54,15 +54,7 @@
             app:fab_colorPressed="@color/botaoClicado"
             app:fab_label="Salvar foto no mapa" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_meus_projetos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_file_present_24"
-            app:fabSize="mini"
-            app:fab_colorNormal="@color/botao"
-            app:fab_colorPressed="@color/botaoClicado"
-            app:fab_label="Projetos" />
+
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_meus_pontos"
@@ -74,6 +66,16 @@
             app:fab_colorNormal="@color/botao"
             app:fab_colorPressed="@color/botaoClicado"
             app:fab_label="Pontos" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_meus_projetos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_file_present_24"
+            app:fabSize="mini"
+            app:fab_colorNormal="@color/botao"
+            app:fab_colorPressed="@color/botaoClicado"
+            app:fab_label="Projetos" />
 
 
         <com.github.clans.fab.FloatingActionButton
