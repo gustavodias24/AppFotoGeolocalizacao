@@ -43,11 +43,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import benicio.soluces.aplicativotestebencio.adapter.AdapterCategorias;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterProjetos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityAdicionarPontoBinding;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusProjetosBinding;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutRecyclerBinding;
+import benicio.soluces.aplicativotestebencio.model.CategoriaModel;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterFotos;
@@ -79,6 +81,10 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     private String nomeProjeto = "";
     private ProjetoModel projetoModel;
 
+    private RecyclerView recyclerCategoria;
+
+    private String categoriaEscolhida = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +99,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
         binding.prosseguirBtn.setOnClickListener( view -> {
             binding.layoutFoto.setVisibility(View.GONE);
-            binding.layoutDados.setVisibility(View.VISIBLE);
+            binding.layoutCategoria.setVisibility(View.VISIBLE);
         });
 
         operador = getSharedPreferences("configPreferences", MODE_PRIVATE).getString("operador", "");
@@ -114,13 +120,21 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         if ( modoExibicao ){
             PontoModel pontoModel = projetoModel.getListaDePontos().get(positionPonto);
             getSupportActionBar().setTitle(projetoModel.getNomeProjeto());
+
             binding.criarPontoBtn.setVisibility(View.GONE);
             binding.cameraBtn.setVisibility(View.GONE);
+            binding.escolherProjeto.setVisibility(View.GONE);
+            binding.nomeProjetoText.setVisibility(View.GONE);
+            binding.prosseguirBtn.setVisibility(View.GONE);
+            binding.layoutCategoria.setVisibility(View.GONE);
+
+            binding.layoutDados.setVisibility(View.VISIBLE);
+            binding.layoutFoto.setVisibility(View.VISIBLE);
+            binding.verNoMapaBtn.setVisibility(View.VISIBLE);
+            binding.compartilharBtn.setVisibility(View.VISIBLE);
 
             binding.obsField.getEditText().setEnabled(false);
             binding.menu.getEditText().setEnabled(false);
-            binding.escolherProjeto.setVisibility(View.GONE);
-            binding.nomeProjetoText.setVisibility(View.GONE);
             binding.obsField.getEditText().setText(pontoModel.getObs());
             binding.menu.getEditText().setText(pontoModel.getCategoria());
 
@@ -212,6 +226,47 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             }
 
         });
+
+        configurarRecyclerCategoria();
+    }
+
+    public void configurarRecyclerCategoria(){
+        recyclerCategoria = binding.recyclerCategoria;
+        recyclerCategoria.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerCategoria.setHasFixedSize(true);
+        recyclerCategoria.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+        List<CategoriaModel> lista = new ArrayList<>();
+        lista.add(new CategoriaModel("árvore", "Árvore"));
+        lista.add(new CategoriaModel("poste", "Poste"));
+        lista.add(new CategoriaModel("área de roçada", "Área de roçada"));
+        lista.add(new CategoriaModel("subestação de energia", "Subestação de energia"));
+        lista.add(new CategoriaModel("erosão", "Erosão"));
+        lista.add(new CategoriaModel("outros", "Outros"));
+        recyclerCategoria.setAdapter( new AdapterCategorias(lista, getApplicationContext()));
+
+        recyclerCategoria.addOnItemTouchListener(new RecyclerItemClickListener(
+                getApplicationContext(),
+                recyclerCategoria,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        categoriaEscolhida = lista.get(position).getCategoria();
+                        binding.layoutCategoria.setVisibility(View.GONE);
+                        binding.layoutDados.setVisibility(View.VISIBLE);
+                        binding.menu.getEditText().setText(categoriaEscolhida);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    }
+                }
+        ));
 
     }
     public Dialog criarDialogVerProjetos(){

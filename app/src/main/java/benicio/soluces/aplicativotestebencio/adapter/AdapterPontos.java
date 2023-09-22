@@ -1,5 +1,6 @@
 package benicio.soluces.aplicativotestebencio.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,18 +33,14 @@ public class AdapterPontos extends RecyclerView.Adapter<AdapterPontos.MyViewHold
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_pontos, parent, false));
     }
-
+    @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PontoModel ponto = lista.get(position);
 
         holder.infos.setText(String.format("%s\nLat: %f Long: %f", ponto.getObs(), ponto.getLatitude(), ponto.getLongitude()));
-        holder.icone.setImageDrawable(ImageUtils.getIconeDoPonto(
-                ponto.getCategoria(),
-                32,
-                32,
-                c
-        ));
+        Picasso.get().load(ImageUtils.getLinkIconeDoPonto(ponto.getCategoria(), c)).into(holder.icone);
+
     }
 
     @Override

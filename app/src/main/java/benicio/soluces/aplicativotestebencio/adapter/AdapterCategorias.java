@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.R;
@@ -37,14 +39,7 @@ public class AdapterCategorias extends RecyclerView.Adapter<AdapterCategorias.My
             CategoriaModel categoriaModel = lista.get(position);
 
             holder.categoriaNome.setText(categoriaModel.getNome());
-            holder.categoriaImg.setImageDrawable(
-                    ImageUtils.getIconeDoPonto(
-                            categoriaModel.getCategoria(),
-                            32,
-                            32,
-                            context
-                    )
-            );
+            Picasso.get().load(ImageUtils.getLinkIconeDoPonto(categoriaModel.getCategoria(), context)).into(holder.categoriaImg);
 
     }
 

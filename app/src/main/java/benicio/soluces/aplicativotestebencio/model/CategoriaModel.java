@@ -4,6 +4,14 @@ public class CategoriaModel {
     String categoria;
     String nome;
 
+    public CategoriaModel(String categoria, String nome) {
+        this.categoria = categoria;
+        this.nome = nome;
+    }
+
+    public CategoriaModel() {
+    }
+
     public String getCategoria() {
         return categoria;
     }
