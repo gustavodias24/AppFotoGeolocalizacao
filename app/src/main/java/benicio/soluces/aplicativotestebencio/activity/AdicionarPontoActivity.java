@@ -91,6 +91,10 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             verProjetosDialog.show();
         });
 
+        binding.prosseguirBtn.setOnClickListener( view -> {
+            binding.layoutFoto.setVisibility(View.GONE);
+            binding.layoutDados.setVisibility(View.VISIBLE);
+        });
 
         operador = getSharedPreferences("configPreferences", MODE_PRIVATE).getString("operador", "");
         verificarPermissoes();

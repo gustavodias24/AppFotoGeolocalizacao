@@ -130,7 +130,7 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
         });
 
         holder.infos.setText(
-                String.format("%s\n%s", projetoModel.getNomeProjeto(), projetoModel.getDataProjeto())
+                String.format("%s %s", projetoModel.getDataProjeto(), projetoModel.getNomeProjeto())
         );
 
     }

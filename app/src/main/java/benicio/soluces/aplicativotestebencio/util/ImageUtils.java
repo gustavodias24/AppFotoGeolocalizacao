@@ -118,17 +118,17 @@ public class ImageUtils {
     public static String getLinkIconeDoPonto(String categoria, Context c) {
 
 
-        String arvoreLink = "https://i.imgur.com/qUYL4ds.png";
+        String arvoreLink = "https://i.imgur.com/7hhYXgu.png";
 
-        String erosaoLink = "https://i.imgur.com/QCJkCBv.png";
+        String erosaoLink = "https://i.imgur.com/U1lVYl7.png";
 
-        String estacaoLink = "https://i.imgur.com/4gTzogd.png";
+        String estacaoLink = "https://i.imgur.com/uSWVY7y.png";
 
-        String outrosLink = "https://i.imgur.com/9FqF2Lu.png";
+        String outrosLink = "https://i.imgur.com/bk368mR.png";
 
-        String posteLink = "https://i.imgur.com/Wa8Eee3.png";
+        String posteLink = "https://i.imgur.com/IROiQE6.png";
 
-        String rocadaLink = "https://i.imgur.com/Rd6koWY.png";
+        String rocadaLink = "https://i.imgur.com/ZMVkN1c.png";
 
         String drawable = null;
 

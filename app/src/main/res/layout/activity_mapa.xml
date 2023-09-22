@@ -48,11 +48,11 @@
             android:id="@+id/foto_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/baseline_add_a_photo_24"
+            android:src="@drawable/baseline_add_a_photo_24_mini"
             app:fabSize="mini"
             app:fab_colorNormal="@color/botao"
             app:fab_colorPressed="@color/botaoClicado"
-            app:fab_label="Adicionar ponto" />
+            app:fab_label="Salvar foto no mapa" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_meus_projetos"

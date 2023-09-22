@@ -68,7 +68,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Projetos salvos");
+        getSupportActionBar().setTitle("Projetos");
 
         vbindig.fabAdicionarProjeto.setOnClickListener( view -> {
             dialogCriarProjeto.show();
@@ -76,19 +76,6 @@ public class MeusProjetosActivity extends AppCompatActivity {
 
         configurarRecyclerProjetos();
         atualizarLista();
-
-        AtomicBoolean isIcon1 = new AtomicBoolean(true);
-        vbindig.organizarProjetoFab.setOnClickListener( view -> {
-            Collections.reverse(listaProjetos);
-            adapterProjetos.notifyDataSetChanged();
-            if (isIcon1.get()){
-                isIcon1.set(false);
-                vbindig.organizarProjetoFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext() , R.drawable.baseline_keyboard_arrow_down_24));
-            }else{
-                isIcon1.set(true);
-                vbindig.organizarProjetoFab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.baseline_keyboard_arrow_up_24));
-            }
-        });
 
         configuarAcaoProjetos();
     }
@@ -127,11 +114,16 @@ public class MeusProjetosActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == android.R.id.home){
             startActivity(new Intent(getApplicationContext(), MapaActivity.class));
             finish();
+        }
+        if( item.getItemId() == R.id.lisa_cima || item.getItemId() == R.id.lisa_baixo){
+            Collections.reverse(listaProjetos);
+            adapterProjetos.notifyDataSetChanged();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -142,7 +134,7 @@ public class MeusProjetosActivity extends AppCompatActivity {
         bindingAdicionarProjeto.dataField.getEditText().setText(dataAtual);
         bindingAdicionarProjeto.pronto.setOnClickListener( view -> {
             String titulo, data;
-            titulo = bindingAdicionarProjeto.tituloProjetoField.getEditText().getText().toString().trim();
+            titulo = bindingAdicionarProjeto.tituloProjetoField.getEditText().getText().toString().trim().toUpperCase();
             data = bindingAdicionarProjeto.dataField.getEditText().getText().toString().trim();
             
             if ( !titulo.isEmpty() && !data.isEmpty()){
