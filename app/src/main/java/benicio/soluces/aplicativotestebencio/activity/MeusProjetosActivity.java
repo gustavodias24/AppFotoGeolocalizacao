@@ -179,34 +179,34 @@ public class MeusProjetosActivity extends AppCompatActivity {
         recyclerProjetos.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         recyclerProjetos.setHasFixedSize(true);
 
-        adapterProjetos = new AdapterProjetos(listaProjetos, getApplicationContext(), this, true);
+        adapterProjetos = new AdapterProjetos(listaProjetos, getApplicationContext(), this, true, true);
         recyclerProjetos.setAdapter(adapterProjetos);
     }
 
     public void configuarAcaoProjetos(){
-        recyclerProjetos.addOnItemTouchListener( new RecyclerItemClickListener(
-                getApplicationContext(),
-                recyclerProjetos,
-                new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Intent i = new Intent(getApplicationContext(), MapaActivity.class);
-                        i.putExtra("idProjeto", listaProjetos.get(position).getIdProjeto());
-                        startActivity(i);
-                        finish();
-                    }
-
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-
-                    }
-
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    }
-                }
-        ));
+//        recyclerProjetos.addOnItemTouchListener( new RecyclerItemClickListener(
+//                getApplicationContext(),
+//                recyclerProjetos,
+//                new RecyclerItemClickListener.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//                        Intent i = new Intent(getApplicationContext(), MapaActivity.class);
+//                        i.putExtra("idProjeto", listaProjetos.get(position).getIdProjeto());
+//                        startActivity(i);
+//                        finish();
+//                    }
+//
+//                    @Override
+//                    public void onLongItemClick(View view, int position) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//                    }
+//                }
+//        ));
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {

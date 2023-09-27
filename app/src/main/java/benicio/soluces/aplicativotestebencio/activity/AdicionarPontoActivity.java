@@ -296,7 +296,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         recylerProjetos.setHasFixedSize(true);
         recylerProjetos.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
         recylerProjetos.setAdapter(
-                new AdapterProjetos(ProjetoUtils.loadList(getApplicationContext()), getApplicationContext(), this, false)
+                new AdapterProjetos(ProjetoUtils.loadList(getApplicationContext()), getApplicationContext(), this, false, false)
         );
 
         recylerProjetos.addOnItemTouchListener(new RecyclerItemClickListener(

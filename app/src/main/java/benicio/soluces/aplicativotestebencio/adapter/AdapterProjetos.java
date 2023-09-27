@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.R;
+import benicio.soluces.aplicativotestebencio.activity.MapaActivity;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregamentoBinding;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregandoImageBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
@@ -46,10 +49,11 @@ import retrofit2.Retrofit;
 
 public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyViewHolder>{
 
+    Boolean projetoView;
     List<ProjetoModel> lista;
     Context c;
     Activity a;
-    Dialog d;
+    Dialog d,d2;
     Boolean exibirBtn;
     Retrofit retrofitIngur = RetrofitUtils.createRetrofitIngur();
     ServiceIngur serviceIngur = RetrofitUtils.createServiceIngur(retrofitIngur);
@@ -59,12 +63,13 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
     private static final String TOKEN = "c3585d73dc8693b4d1ea33beb0449c704b54dac7";
     int quantidadeDeLinkGerado = 0;
 
-    public AdapterProjetos(List<ProjetoModel> lista, Context c, Activity a, Boolean exibirBtn) {
+    public AdapterProjetos(List<ProjetoModel> lista, Context c, Activity a, Boolean exibirBtn, Boolean projetoView) {
         this.lista = lista;
         this.c = c;
         this.a = a;
         this.exibirBtn = exibirBtn;
         this.dialogCarregamento = criarDialogCarregamento();
+        this.projetoView = projetoView;
     }
 
     @NonNull
@@ -79,10 +84,12 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
         ProjetoModel projetoModel = lista.get(position);
         Picasso.get().load(R.raw.iconproject).into(holder.img);
         if ( exibirBtn ){
-            holder.exportarBtn.setVisibility(View.VISIBLE);
+            holder.layoutBtn.setVisibility(View.VISIBLE);
         }
 
+
         AlertDialog.Builder b = new AlertDialog.Builder(a);
+        b.setTitle("Aviso");
         b.setMessage("Exportar para KMZ/KML ?");
         b.setNegativeButton("Não", null);
         b.setPositiveButton("Sim", (d, i) -> {
@@ -127,8 +134,29 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
 
         });
 
-        d = b.create();
+        AlertDialog.Builder b2 = new AlertDialog.Builder(a);
+        b2.setTitle("Aviso");
+        b2.setMessage("Realizar relatório em pdf ?");
+        b2.setNegativeButton("Não", null);
+        b2.setPositiveButton("Sim", (d, i) -> {
+            projetoModel.gerarRelatorioPdf(a);
+            d2.dismiss();
+        });
 
+        d = b.create();
+        d2 = b2.create();
+
+        if( projetoView ){
+            holder.itemView.setOnClickListener( view -> {
+                Intent i = new Intent(a, MapaActivity.class);
+                i.putExtra("idProjeto", projetoModel.getIdProjeto());
+                a.startActivity(i);
+                a.finish();
+            });
+        }
+        holder.pdfBtn.setOnClickListener( view -> {
+            d2.show();
+        });
         holder.exportarBtn.setOnClickListener( view -> {
             d.show();
         });
@@ -147,12 +175,15 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
         TextView infos;
-        ImageButton exportarBtn;
+        ImageButton exportarBtn, pdfBtn;
+        LinearLayout layoutBtn;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             img = itemView.findViewById(R.id.icone_ponto);
             infos = itemView.findViewById(R.id.text_infos);
             exportarBtn = itemView.findViewById(R.id.exportart_btn);
+            pdfBtn = itemView.findViewById(R.id.pdf_btn);
+            layoutBtn = itemView.findViewById(R.id.layout_btns);
         }
     }
 

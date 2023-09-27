@@ -8,7 +8,8 @@ public class PontoModel {
     // essa lista é uma lista de Uri que convertir para String
     List<String> images = new ArrayList<>();
     List<String> imagesLink = new ArrayList<>();
-    String categoria, obs, operador;
+    String  obs, operador;
+    String categoria;
     String data = "";
     Double latitude, longitude;
 

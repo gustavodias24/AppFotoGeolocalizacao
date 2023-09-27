@@ -3,10 +3,20 @@ package benicio.soluces.aplicativotestebencio.model;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 
@@ -59,7 +69,85 @@ public class ProjetoModel {
         return listaDePontos;
     }
 
+    public void gerarRelatorioPdf(Activity a){
 
+        Bitmap bmpTemplate = BitmapFactory.decodeResource(a.getResources(), R.raw.templaterelatorio);
+        Bitmap scaledbmpTemplate = Bitmap.createScaledBitmap(bmpTemplate, 792, 1120, false);
+        int pageHeight = 1120;
+        int pagewidth = 792;
+
+        PdfDocument pdfDocument = new PdfDocument();
+
+        Paint paint = new Paint();
+        Paint title = new Paint();
+
+        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+
+        Canvas canvas = myPage.getCanvas();
+
+        canvas.drawBitmap(scaledbmpTemplate, 1, 1, paint);
+
+        SharedPreferences preferences = a.getSharedPreferences("configPreferences", Context.MODE_PRIVATE);
+        String logoEmpresaString = preferences.getString("logoImage", "");
+
+        if ( !logoEmpresaString.isEmpty() ){
+            byte[] decodedBytes = Base64.decode(logoEmpresaString, Base64.DEFAULT);
+            Bitmap logoEmpresabmp = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            Bitmap logoEpresaScaledbmp = Bitmap.createScaledBitmap(logoEmpresabmp, 104, 104, false);
+            canvas.drawBitmap(logoEpresaScaledbmp, 76, 15, paint);
+        }
+
+        title.setTextSize(25);
+        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        title.setColor(ContextCompat.getColor(a, R.color.black));
+
+        canvas.drawText(this.nomeProjeto, 212, 173, title);
+        canvas.drawText(preferences.getString("operador", "Nome não informado."), 246, 226, title);
+
+        int espacamentoEntrePontos = 25;
+        int espacamentoEntreLinhas = 15;
+        int max = 11;
+        int index = 1;
+
+
+        title.setTextSize(10);
+
+        int startX = 94;
+        int startY = 303;
+
+        for ( PontoModel ponto : this.listaDePontos){
+            canvas.drawText(String.format("(%s) - %s - %s", index, ponto.getData(), ponto.getCategoria()), startX, startY, title);
+            startY += espacamentoEntreLinhas;
+            canvas.drawText(String.format("Obs.: %s", ponto.getObs()), startX, startY, title);
+            startY += espacamentoEntreLinhas;
+
+            canvas.drawText(String.format("Link: https://earth.google.com/web/@%s,%s,48.96653032a,223.03609172d,35y,342.71830917h,0t,0r", ponto.getLatitude(), ponto.getLongitude()), startX, startY, title);
+            startY += espacamentoEntrePontos;
+            index++;
+        }
+//        title.setTextAlign(Paint.Align.CENTER);
+
+        pdfDocument.finishPage(myPage);
+
+        File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+
+        File kaizenProjetosDir = new File(documentosDir, "KaizenWayPointProjetos");
+        if (!kaizenProjetosDir.exists()) {
+            kaizenProjetosDir.mkdirs();
+        }
+
+        String nomeArquivo = "Relatório_" + this.nomeProjeto.replace(" ", "_") + "_" + this.dataProjeto.replace("/", "_") + ".pdf";
+        File file = new File(kaizenProjetosDir, nomeArquivo);
+        try {
+            pdfDocument.writeTo(new FileOutputStream(file));
+            Toast.makeText(a.getApplicationContext(), "Relatório salvo em Documents/KaizenWayPointProjetos", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Log.d("ProjetoModel", "gerarRelatorioPdf: " + e.getMessage());
+            e.printStackTrace();
+        }
+        pdfDocument.close();
+    }
     public void gerarArquivoKML(Activity context) {
 
         StringBuilder kmlBuilder = new StringBuilder();
@@ -150,7 +238,6 @@ public class ProjetoModel {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         context.startActivity(intent);
     }
-
     public String returnCascadingStyle(String highlightId,String normalId, String categoria, Context c){
         StringBuilder xmlStringBuilder = new StringBuilder();
 
