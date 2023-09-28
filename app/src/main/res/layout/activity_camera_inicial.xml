@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.CameraInicialActivity">
+
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        >
+
+    </androidx.camera.view.PreviewView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Sinapses"
+        android:textColor="#45FFFFFF"
+        android:textSize="24sp" />
+
+    <ImageButton
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40sp"
+        android:id="@+id/capture"
+        android:src="@drawable/baseline_add_a_photo_24_mini"
+        android:scaleType="centerCrop"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="#fff" />
+    <ImageButton
+        android:id="@+id/flipcam"
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        android:src="@drawable/camera_flip_outline"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerCrop"
+        android:layout_margin="8dp"
+        app:tint="#fff" />
+
+    <TextView
+        android:id="@+id/infos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="24dp"
+        android:text="Carregando..."
+        android:textColor="#fff"
+        android:textSize="24sp"
+        android:layout_marginBottom="200sp"
+        android:layout_marginEnd="8sp"/>
+</RelativeLayout>

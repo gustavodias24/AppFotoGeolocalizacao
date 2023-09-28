@@ -1,6 +1,7 @@
 package benicio.soluces.aplicativotestebencio.model;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -143,7 +144,11 @@ public class ProjetoModel {
             pdfDocument.writeTo(new FileOutputStream(file));
             Toast.makeText(a.getApplicationContext(), "Relatório salvo em Documents/KaizenWayPointProjetos", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            Log.d("ProjetoModel", "gerarRelatorioPdf: " + e.getMessage());
+            AlertDialog.Builder b = new AlertDialog.Builder(a);
+            b.setTitle("Aviso");
+            b.setMessage(e.getMessage());
+            b.setPositiveButton("Fechar", null);
+            b.create().show();
             e.printStackTrace();
         }
         pdfDocument.close();

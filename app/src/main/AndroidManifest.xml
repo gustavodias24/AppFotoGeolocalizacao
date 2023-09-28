@@ -22,6 +22,7 @@
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:requestLegacyExternalStorage="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,22 +31,24 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
 
+        <activity
+            android:name=".activity.MapaActivity"
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="benicio.soluces.aplicativotestebencio.provider"
-            android:grantUriPermissions="true"
-            android:exported="false">
-
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
-
+                android:resource="@xml/file_paths" />
         </provider>
 
         <activity
-            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
             android:name=".activity.NotificacoesActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />
         <activity
             android:name=".activity.ConfigutacoesActivity"
             android:exported="false"
@@ -69,13 +72,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.AplicativoTesteBencio" />
         <activity
-            android:name=".activity.MapaActivity"
+            android:name=".activity.CameraInicialActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            >
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
