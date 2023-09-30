@@ -1,9 +1,5 @@
 package benicio.soluces.aplicativotestebencio.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import benicio.soluces.aplicativotestebencio.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import benicio.soluces.aplicativotestebencio.databinding.ActivityConfigutacoesBinding;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
 
@@ -96,7 +95,14 @@ public class ConfigutacoesActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if ( item.getItemId() == android.R.id.home){
-            startActivity(new Intent(getApplicationContext(), MapaActivity.class));
+            Bundle b = getIntent().getExtras();
+            Boolean vindoDaPrimeira = false;
+            if ( b != null){
+                vindoDaPrimeira = b.getBoolean("vindoDaPrimeira", false);
+            }
+            if ( !vindoDaPrimeira ){
+                startActivity(new Intent(getApplicationContext(), MapaActivity.class));
+            }
             finish();
         }
         return super.onOptionsItemSelected(item);
