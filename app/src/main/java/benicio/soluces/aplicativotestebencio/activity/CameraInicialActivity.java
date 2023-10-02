@@ -19,7 +19,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.camera.core.AspectRatio;
@@ -63,7 +62,7 @@ public class CameraInicialActivity extends AppCompatActivity {
 
     int cameraFacing = CameraSelector.LENS_FACING_BACK;
     private PreviewView previewView;
-    private static final int PERMISSIONS_REQUEST_LOCATION = 2;
+    private static final int PERMISSIONS_GERAL = 1;
     private Double latitude, longitude;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
@@ -88,8 +87,6 @@ public class CameraInicialActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        verificarPermissoes();
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         locationRequest = new LocationRequest();
@@ -109,19 +106,7 @@ public class CameraInicialActivity extends AppCompatActivity {
             }
         };
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            startLocationUpdates();
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
-        }
-
         previewView = activityBinding.cameraPreview;
-
-        if (ContextCompat.checkSelfPermission(CameraInicialActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ){
-            activityResultLauncher.launch(Manifest.permission.CAMERA);
-        }else{
-            startCamera(cameraFacing);
-        }
 
         activityBinding.flipcam.setOnClickListener( view -> {
             if ( cameraFacing == CameraSelector.LENS_FACING_BACK){
@@ -142,7 +127,19 @@ public class CameraInicialActivity extends AppCompatActivity {
             startActivity(i);
         });
 
+
+        if (
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startLocationUpdates();
+            startCamera(cameraFacing);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA}, PERMISSIONS_GERAL);
+        }
+
     }
+
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -352,28 +349,31 @@ public class CameraInicialActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    public void verificarPermissoes(){
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)   != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(CameraInicialActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            ActivityCompat.requestPermissions(CameraInicialActivity.this, new String[] {Manifest.permission.CAMERA}, 1);
-            ActivityCompat.requestPermissions(CameraInicialActivity.this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            ActivityCompat.requestPermissions(CameraInicialActivity.this, new String[] {Manifest.permission.ACCESS_NETWORK_STATE}, 1);
-            return;
-        }
 
-    }
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION  && resultCode == RESULT_OK) {
-            startLocationUpdates();
-        }else{
-            Toast.makeText(this, "ACESSO NEGADO", Toast.LENGTH_SHORT).show();
-        }
-    }
+        if (requestCode == PERMISSIONS_GERAL) {
+            boolean allPermissionsGranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false;
+                    break;
+                }
+            }
+
+            // Se todas as permissões foram concedidas, inicie as operações que requerem permissões
+            if (allPermissionsGranted) {
+                startLocationUpdates();
+                startCamera(cameraFacing);
+            } else {
+                // Se o usuário recusar alguma permissão, exiba uma mensagem informando a necessidade das permissões
+                Toast.makeText(this, "PERMISSÃO NEGADA", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+    }}
+
     public  void baterPrintDenovo (){
         try {
             activityBinding.configs.setVisibility(View.GONE);
