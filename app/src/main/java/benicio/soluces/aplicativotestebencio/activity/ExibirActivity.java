@@ -105,20 +105,28 @@ public class ExibirActivity extends AppCompatActivity{
                 // Capture a tela como um bitmap
                 try {
                     // create bitmap screen capture
+
                     View v1 = getWindow().getDecorView().getRootView();
                     v1.setDrawingCacheEnabled(true);
                     Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
                     v1.setDrawingCacheEnabled(false);
 
-                    File externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                    File imageFile = new File(externalFilesDir, UUID.randomUUID().toString() + ".png");
+                    File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+
+                    File fotoMapaDir = new File(documentosDir, "FOTO MAPA");
+                    if (!fotoMapaDir.exists()) {
+                        fotoMapaDir.mkdirs();
+                    }
+
+                    File imageFile = new File(fotoMapaDir, UUID.randomUUID().toString() + ".png");
 
                     FileOutputStream outputStream = new FileOutputStream(imageFile);
                     int quality = 70;
+
                     bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
+
                     outputStream.flush();
                     outputStream.close();
-
 
                     List<String> listaAntiga = ImageUtils.loadList(getApplicationContext());
                     listaAntiga.add(Uri.fromFile(imageFile).toString());

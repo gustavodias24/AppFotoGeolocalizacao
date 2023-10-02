@@ -4,11 +4,15 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -28,6 +32,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -35,8 +40,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,9 +52,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
+import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityCameraInicialBinding;
 
 public class CameraInicialActivity extends AppCompatActivity {
@@ -69,6 +79,7 @@ public class CameraInicialActivity extends AppCompatActivity {
     });
     private ActivityCameraInicialBinding activityBinding;
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,8 +141,8 @@ public class CameraInicialActivity extends AppCompatActivity {
             i.putExtra("vindoDaPrimeira", true);
             startActivity(i);
         });
-    }
 
+    }
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -161,10 +172,11 @@ public class CameraInicialActivity extends AppCompatActivity {
                 }
 
                 activityBinding.capture.setOnClickListener( view -> {
+
                     if (ContextCompat.checkSelfPermission(CameraInicialActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         activityResultLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     } else {
-                        takePicture(imageCapture);
+                        takePrint(imageCapture);
                     }
                 });
 
@@ -175,33 +187,122 @@ public class CameraInicialActivity extends AppCompatActivity {
             }
         }, ContextCompat.getMainExecutor(this));
     }
-    public void takePicture( ImageCapture imageCapture){
-        final File file = new File(getExternalFilesDir(null), System.currentTimeMillis() + ".png");
+    public void takePrint(ImageCapture imageCapture){
+        activityBinding.configs.setVisibility(View.GONE);
+        activityBinding.map.setVisibility(View.INVISIBLE);
+        activityBinding.flipcam.setVisibility(View.GONE);
+        activityBinding.capture.setVisibility(View.GONE);
+
+        activityBinding.imagePreview.setVisibility(View.VISIBLE);
+
+        File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+
+        File fotoMapaDir = new File(documentosDir, "FOTO MAPA");
+        if (!fotoMapaDir.exists()) {
+            fotoMapaDir.mkdirs();
+        }
+
+        File partesDir = new File(fotoMapaDir, "PARTES");
+
+        if ( !partesDir.exists()){
+            partesDir.mkdirs();
+        }
+
+        final File file = new File(partesDir, System.currentTimeMillis() + ".png");
         ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
         imageCapture.takePicture(outputFileOptions, Executors.newCachedThreadPool(), new ImageCapture.OnImageSavedCallback() {
             @Override
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(CameraInicialActivity.this, "Imagem salva: " + file.getPath(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                startCamera(cameraFacing);
-            }
+                runOnUiThread(() -> {
+                    Picasso.get().load(file).into(activityBinding.imagePreview, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            try {
+                                // create bitmap screen capture
+                                View v1 = getWindow().getDecorView().getRootView().findViewById(R.id.maconha);
+                                v1.setDrawingCacheEnabled(true);
+                                Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+                                v1.setDrawingCacheEnabled(false);
 
+                                File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+
+                                File fotoMapaDir = new File(documentosDir, "FOTO MAPA");
+
+                                if (!fotoMapaDir.exists()) {
+                                    fotoMapaDir.mkdirs();
+                                }
+
+                                File partesDir = new File(fotoMapaDir, "PARTES");
+
+                                if ( !partesDir.exists()){
+                                    partesDir.mkdirs();
+                                }
+
+                                File imageFile = new File(partesDir, UUID.randomUUID().toString() + ".png");
+
+                                FileOutputStream outputStream = new FileOutputStream(imageFile);
+                                int quality = 70;
+
+                                bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
+
+                                outputStream.flush();
+                                outputStream.close();
+
+                                Toast.makeText(CameraInicialActivity.this, "Salvo em Documents/FOTO MAPA", Toast.LENGTH_SHORT).show();
+
+                                activityBinding.configs.setVisibility(View.VISIBLE);
+                                activityBinding.map.setVisibility(View.VISIBLE);
+                                activityBinding.flipcam.setVisibility(View.VISIBLE);
+                                activityBinding.capture.setVisibility(View.VISIBLE);
+                                startCamera(cameraFacing);
+                                baterPrintDenovo();
+                            } catch (Throwable e) {
+
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(CameraInicialActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            activityBinding.imagePreview.setVisibility(View.GONE);
+                        }
+                    });
+                });
+            }
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(CameraInicialActivity.this, "Erro: "+ exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                runOnUiThread(() -> Toast.makeText(CameraInicialActivity.this, "Erro: "+ exception.getMessage(), Toast.LENGTH_SHORT).show());
                 startCamera(cameraFacing);
             }
         });
     }
+//    public void takePicture( ImageCapture imageCapture){
+//        final File file = new File(getExternalFilesDir(null), System.currentTimeMillis() + ".png");
+//        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
+//        imageCapture.takePicture(outputFileOptions, Executors.newCachedThreadPool(), new ImageCapture.OnImageSavedCallback() {
+//            @Override
+//            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(CameraInicialActivity.this, "Imagem salva: " + file.getPath(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                startCamera(cameraFacing);
+//            }
+//
+//            @Override
+//            public void onError(@NonNull ImageCaptureException exception) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(CameraInicialActivity.this, "Erro: "+ exception.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                startCamera(cameraFacing);
+//            }
+//        });
+//    }
     private int aspectRatio(int width, int height) {
         double previewRatio = (double) Math.max(width, height) / Math.min(width, height);
         if (Math.abs(previewRatio - 4.0 / 3.0) <= Math.abs(previewRatio - 16.0 / 9.0)) {
@@ -251,7 +352,6 @@ public class CameraInicialActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
     public void verificarPermissoes(){
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)   != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -264,7 +364,6 @@ public class CameraInicialActivity extends AppCompatActivity {
         }
 
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -275,5 +374,55 @@ public class CameraInicialActivity extends AppCompatActivity {
             Toast.makeText(this, "ACESSO NEGADO", Toast.LENGTH_SHORT).show();
         }
     }
+    public  void baterPrintDenovo (){
+        try {
+            activityBinding.configs.setVisibility(View.GONE);
+            activityBinding.map.setVisibility(View.INVISIBLE);
+            activityBinding.flipcam.setVisibility(View.GONE);
+            activityBinding.capture.setVisibility(View.GONE);
 
+            // create bitmap screen capture
+            View v1 = getWindow().getDecorView().getRootView().findViewById(R.id.maconha);
+            v1.setDrawingCacheEnabled(true);
+            Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+            v1.setDrawingCacheEnabled(false);
+
+            File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+
+            File fotoMapaDir = new File(documentosDir, "FOTO MAPA");
+            if (!fotoMapaDir.exists()) {
+                fotoMapaDir.mkdirs();
+            }
+
+            File imageFile = new File(fotoMapaDir, UUID.randomUUID().toString() + ".png");
+
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+            int quality = 70;
+
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, outputStream);
+
+            outputStream.flush();
+            outputStream.close();
+
+            activityBinding.imagePreview.setVisibility(View.GONE);
+
+            activityBinding.configs.setVisibility(View.VISIBLE);
+            activityBinding.map.setVisibility(View.VISIBLE);
+            activityBinding.flipcam.setVisibility(View.VISIBLE);
+            activityBinding.capture.setVisibility(View.VISIBLE);
+            startCamera(cameraFacing);
+
+            Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(CameraInicialActivity.this),
+                    "benicio.soluces.aplicativotestebencio.provider", imageFile);
+
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("image/*");
+            i.putExtra(Intent.EXTRA_STREAM, uri);
+            i.putExtra(Intent.EXTRA_TEXT, "Veja essa imagem que eu tirei utilizando o software FOTO MAPA da empresa Sinapses!");
+            startActivity(Intent.createChooser(i, "Compartilhar via"));
+
+        } catch (Throwable e) {
+            Log.d("baterPrintDenovo:",  e.getMessage());
+        }
+    }
 }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/maconha"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,11 +12,16 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        >
-
+        android:layout_height="match_parent">
     </androidx.camera.view.PreviewView>
+
+    <ImageView
+        android:id="@+id/imagePreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        tools:srcCompat="@drawable/ic_launcher_background" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -28,6 +35,8 @@
         android:textColor="#45FFFFFF"
         android:textSize="24sp" />
 
+
+
     <ImageButton
         android:layout_width="60sp"
         android:layout_height="60sp"
@@ -39,6 +48,8 @@
         android:scaleType="centerCrop"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:tint="#fff" />
+
+
 
     <ImageButton
         android:id="@+id/flipcam"
@@ -80,11 +91,10 @@
         android:id="@+id/infos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/map"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8sp"
-        android:layout_marginBottom="150sp"
         android:text="Carregando..."
         android:textAlignment="viewEnd"
         android:textColor="#fff"

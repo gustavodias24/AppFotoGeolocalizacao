@@ -133,7 +133,7 @@ public class ProjetoModel {
 
         File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 
-        File kaizenProjetosDir = new File(documentosDir, "KaizenWayPointProjetos");
+        File kaizenProjetosDir = new File(documentosDir, "FOTO MAPA");
         if (!kaizenProjetosDir.exists()) {
             kaizenProjetosDir.mkdirs();
         }
@@ -194,7 +194,7 @@ public class ProjetoModel {
         File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 
         // Crie a pasta "KaizenProjetos" dentro do diretório "Documentos"
-        File kaizenProjetosDir = new File(documentosDir, "KaizenWayPointProjetos");
+        File kaizenProjetosDir = new File(documentosDir, "FOTO MAPA");
         if (!kaizenProjetosDir.exists()) {
             kaizenProjetosDir.mkdirs();
         }
