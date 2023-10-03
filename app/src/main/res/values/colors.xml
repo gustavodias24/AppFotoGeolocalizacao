@@ -2,6 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="botao">#0CC0DF</color>
-    <color name="botaoClicado">#078CC9</color>
+    <color name="botao">#066EB6</color>
+    <color name="botaoClicado">#004AAC</color>
 </resources>

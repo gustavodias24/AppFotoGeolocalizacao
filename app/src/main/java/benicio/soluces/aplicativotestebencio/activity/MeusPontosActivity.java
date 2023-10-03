@@ -1,5 +1,11 @@
 package benicio.soluces.aplicativotestebencio.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -7,19 +13,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusPontosBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
-import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
@@ -48,6 +47,10 @@ public class MeusPontosActivity extends AppCompatActivity {
                             bundle.getString("idProjeto"),
                             getApplicationContext()).getListaDePontos()
             );
+
+            if ( listaPontos.size() > 0){
+                vbindig.avisoEmptyText.setVisibility(View.GONE);
+            }
         }
         else{
             startActivity(new Intent(getApplicationContext(), AdicionarPontoActivity.class));

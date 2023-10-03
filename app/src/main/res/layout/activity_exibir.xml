@@ -62,6 +62,7 @@
             app:fab_colorPressed="@color/botaoClicado"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:rippleColor="#FFFFFF"
             app:srcCompat="@drawable/baseline_arrow_forward_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -415,11 +415,16 @@ public class CameraInicialActivity extends AppCompatActivity {
             Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(CameraInicialActivity.this),
                     "benicio.soluces.aplicativotestebencio.provider", imageFile);
 
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("image/*");
-            i.putExtra(Intent.EXTRA_STREAM, uri);
-            i.putExtra(Intent.EXTRA_TEXT, "Veja essa imagem que eu tirei utilizando o software FOTO MAPA da empresa Sinapses!");
-            startActivity(Intent.createChooser(i, "Compartilhar via"));
+            Intent viewImageIntent = new Intent(Intent.ACTION_VIEW);
+            viewImageIntent.setDataAndType(uri, "image/*");
+            viewImageIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(viewImageIntent);
+
+//            Intent i = new Intent(Intent.ACTION_SEND);
+//            i.setType("image/*");
+//            i.putExtra(Intent.EXTRA_STREAM, uri);
+//            i.putExtra(Intent.EXTRA_TEXT, "Veja essa imagem que eu tirei utilizando o software FOTO MAPA da empresa Sinapses!");
+//            startActivity(Intent.createChooser(i, "Compartilhar via"));
 
         } catch (Throwable e) {
             Log.d("baterPrintDenovo:",  e.getMessage());

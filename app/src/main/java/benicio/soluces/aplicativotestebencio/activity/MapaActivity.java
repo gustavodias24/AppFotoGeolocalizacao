@@ -1,11 +1,7 @@
 package benicio.soluces.aplicativotestebencio.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +10,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -40,13 +40,12 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import java.util.ArrayList;
 import java.util.List;
 
+import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
-import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.service.ServiceNotificacoes;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
-import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
 import retrofit2.Call;
@@ -70,6 +69,9 @@ public class MapaActivity extends AppCompatActivity {
     private Bundle bundle;
     private SharedPreferences sharedPreferencesNovidade;
     private SharedPreferences.Editor editorNovidade;
+
+    private SharedPreferences preferecesFirts;
+    private SharedPreferences.Editor editorFirts;
     private int qtdNovidadeNova = 0 ;
     private Retrofit retrofit;
     private ServiceNotificacoes serviceNotificacao;
@@ -78,6 +80,21 @@ public class MapaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         vbinding = ActivityMapaBinding.inflate(getLayoutInflater());
         setContentView(vbinding.getRoot());
+
+        vbinding.menuOpcoes.open(true);
+
+        preferecesFirts = getSharedPreferences("preferecesFirts", MODE_PRIVATE);
+        editorFirts = preferecesFirts.edit();
+
+        if ( preferecesFirts.getBoolean("first", true) ){
+            AlertDialog.Builder d = new AlertDialog.Builder(MapaActivity.this);
+            d.setTitle("Bem-vindo!");
+            d.setCancelable(false);
+            d.setMessage("Crie um projeto para inserir pontos no mapa com fotos e observações, se quiser pode exportar o projeto para pdf ou kmz/kml!");
+            d.setPositiveButton("OK", (dialogInterface, i) -> editorFirts.putBoolean("first", false).apply());
+            d.create().show();
+
+        }
 
         configurarRetrofit();
         bundle = getIntent().getExtras();
@@ -150,6 +167,7 @@ public class MapaActivity extends AppCompatActivity {
         if(bundle != null){
 
             vbinding.fabMeusPontos.setVisibility(View.VISIBLE);
+            vbinding.fotoFab.setVisibility(View.VISIBLE);
             vbinding.fabMeusPontos.setOnClickListener(view -> {
                 Intent i = new Intent(getApplicationContext(), MeusPontosActivity.class);
                 i.putExtra("idProjeto", bundle.getString("idProjeto"));
