@@ -7,11 +7,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,7 +28,6 @@ import java.util.List;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.activity.MapaActivity;
-import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregamentoBinding;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregandoImageBinding;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
@@ -90,7 +87,7 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
 
         AlertDialog.Builder b = new AlertDialog.Builder(a);
         b.setTitle("Aviso");
-        b.setMessage("Exportar para KMZ/KML ?");
+        b.setMessage("Exportar para KMZ/KML ?\nArquivo ficará salvo em Documents/FOTO MAPA");
         b.setNegativeButton("Não", null);
         b.setPositiveButton("Sim", (d, i) -> {
             dialogCarregamento.show();
@@ -136,7 +133,7 @@ public class AdapterProjetos extends RecyclerView.Adapter<AdapterProjetos.MyView
 
         AlertDialog.Builder b2 = new AlertDialog.Builder(a);
         b2.setTitle("Aviso");
-        b2.setMessage("Realizar relatório em pdf ?");
+        b2.setMessage("Realizar relatório em pdf ?\nArquivo ficará salvo em Documents/FOTO MAPA");
         b2.setNegativeButton("Não", null);
         b2.setPositiveButton("Sim", (d, i) -> {
             projetoModel.gerarRelatorioPdf(a);
