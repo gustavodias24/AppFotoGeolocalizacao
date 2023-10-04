@@ -74,15 +74,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.AplicativoTesteBencio" />
 
-        <activity
-            android:name=".activity.CameraInicialActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
-            android:exported="false" />
 
         <activity
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
-            android:name=".activity.SplashActivity"
+            android:name=".activity.CameraInicialActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
