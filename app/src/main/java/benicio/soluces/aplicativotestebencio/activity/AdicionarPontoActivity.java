@@ -1,6 +1,19 @@
 package benicio.soluces.aplicativotestebencio.activity;
 
 //salvar na pasta do programa
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -12,33 +25,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Base64;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,18 +38,14 @@ import java.util.List;
 import java.util.Locale;
 
 import benicio.soluces.aplicativotestebencio.adapter.AdapterCategorias;
-import benicio.soluces.aplicativotestebencio.adapter.AdapterPontos;
+import benicio.soluces.aplicativotestebencio.adapter.AdapterFotos;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterProjetos;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityAdicionarPontoBinding;
-import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusProjetosBinding;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutRecyclerBinding;
 import benicio.soluces.aplicativotestebencio.model.CategoriaModel;
 import benicio.soluces.aplicativotestebencio.model.PontoModel;
-import benicio.soluces.aplicativotestebencio.R;
-import benicio.soluces.aplicativotestebencio.adapter.AdapterFotos;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.util.ImageUtils;
-import benicio.soluces.aplicativotestebencio.util.PontosUtils;
 import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
 import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
@@ -82,12 +69,14 @@ public class AdicionarPontoActivity extends AppCompatActivity {
     private int positionPonto;
     private String idProjeto;
     private String nomeProjeto = "";
+    private String categoriaEscolhida = "";
+
     private ProjetoModel projetoModel;
 
     private RecyclerView recyclerCategoria;
 
-    private String categoriaEscolhida = "";
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +85,9 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
         verProjetosDialog = criarDialogVerProjetos();
 
-        binding.escolherProjeto.setOnClickListener( view -> {
-            verProjetosDialog.show();
-        });
+//        binding.escolherProjeto.setOnClickListener( view -> {
+//            verProjetosDialog.show();
+//        });
 
         binding.prosseguirBtn.setOnClickListener( view -> {
             binding.layoutFoto.setVisibility(View.GONE);
@@ -117,7 +106,10 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             idProjeto = b.getString("idProjeto");
             projetoModel = ProjetoUtils.getProjetoModel(idProjeto, getApplicationContext());
             nomeProjeto = projetoModel.getNomeProjeto();
-            binding.nomeProjetoText.setText(nomeProjeto);
+            binding.nomeProjetoText.setText(
+                    "Categoria do Ponto: " + categoriaEscolhida
+                    + "\n" +
+                    "Projeto selecionado: " + nomeProjeto);
         }
 
         if ( modoExibicao ){
@@ -126,7 +118,6 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
             binding.criarPontoBtn.setVisibility(View.GONE);
             binding.cameraBtn.setVisibility(View.GONE);
-            binding.escolherProjeto.setVisibility(View.GONE);
             binding.nomeProjetoText.setVisibility(View.GONE);
             binding.prosseguirBtn.setVisibility(View.GONE);
             binding.layoutCategoria.setVisibility(View.GONE);
@@ -137,9 +128,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             binding.compartilharBtn.setVisibility(View.VISIBLE);
 
             binding.obsField.getEditText().setEnabled(false);
-            binding.menu.getEditText().setEnabled(false);
             binding.obsField.getEditText().setText(pontoModel.getObs());
-            binding.menu.getEditText().setText(pontoModel.getCategoria());
 
             listaDeFotos.addAll(pontoModel.getImages());
             adapterFotos.notifyDataSetChanged();
@@ -151,7 +140,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if ( !modoExibicao ){
-            configurarMenuCategoria();
+//            configurarMenuCategoria();
             getSupportActionBar().setTitle("Adicionar ponto");
         }
 
@@ -192,10 +181,9 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         });
 
         binding.criarPontoBtn.setOnClickListener( view -> {
-            String obs, categoria;
+            String obs;
 
             obs = binding.obsField.getEditText().getText().toString().isEmpty() ? "Sem observações" : binding.obsField.getEditText().getText().toString();
-            categoria = binding.menu.getEditText().getText().toString().isEmpty() ? "outros" : binding.menu.getEditText().getText().toString();
 
             if ( !nomeProjeto.isEmpty() ){
 
@@ -215,7 +203,7 @@ public class AdicionarPontoActivity extends AppCompatActivity {
 
                 assert projetoModel != null;
                 projetoModel.getListaDePontos().add(
-                        new PontoModel( data,listaDeFotos, categoria, obs, operador, latitude, longitude)
+                        new PontoModel( data,listaDeFotos, categoriaEscolhida, obs, operador, latitude, longitude)
                 );
 
                 listaAntiga.remove(pos);
@@ -254,12 +242,17 @@ public class AdicionarPontoActivity extends AppCompatActivity {
                 getApplicationContext(),
                 recyclerCategoria,
                 new RecyclerItemClickListener.OnItemClickListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onItemClick(View view, int position) {
                         categoriaEscolhida = lista.get(position).getCategoria();
                         binding.layoutCategoria.setVisibility(View.GONE);
                         binding.layoutDados.setVisibility(View.VISIBLE);
-                        binding.menu.getEditText().setText(categoriaEscolhida);
+
+                        binding.nomeProjetoText.setText(
+                                "Categoria do Ponto: " + categoriaEscolhida
+                                        + "\n" +
+                                        "Projeto selecionado: " + nomeProjeto);
                     }
 
                     @Override
@@ -303,10 +296,16 @@ public class AdicionarPontoActivity extends AppCompatActivity {
                 getApplicationContext(),
                 recylerProjetos,
                 new RecyclerItemClickListener.OnItemClickListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onItemClick(View view, int position) {
                         nomeProjeto = ProjetoUtils.loadList(getApplicationContext()).get(position).getNomeProjeto();
-                        binding.nomeProjetoText.setText(nomeProjeto);
+
+                        binding.nomeProjetoText.setText(
+                                "Categoria do Ponto: " + categoriaEscolhida
+                                + "\n" +
+                                "Projeto selecionado: " + nomeProjeto);
+
                         verProjetosDialog.dismiss();
                     }
 
@@ -332,17 +331,17 @@ public class AdicionarPontoActivity extends AppCompatActivity {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
-    private void configurarMenuCategoria (){
-        String[] items = {"poste", "árvore", "área de roçada", "subestação de energia", "erosão", "outros", "ferrugem"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
-
-        TextInputLayout categoriaMenu = binding.menu;
-
-        AutoCompleteTextView autoCompleteTextView = categoriaMenu.findViewById(R.id.auto_complete);
-
-        autoCompleteTextView.setAdapter(adapter);
-    }
+//    private void configurarMenuCategoria (){
+//        String[] items = {"poste", "árvore", "área de roçada", "subestação de energia", "erosão", "outros", "ferrugem"};
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
+//
+//        TextInputLayout categoriaMenu = binding.menu;
+//
+//        AutoCompleteTextView autoCompleteTextView = categoriaMenu.findViewById(R.id.auto_complete);
+//
+//        autoCompleteTextView.setAdapter(adapter);
+//    }
 
     @SuppressLint("NotifyDataSetChanged")
     @Override

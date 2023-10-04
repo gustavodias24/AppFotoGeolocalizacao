@@ -17,6 +17,7 @@
             android:id="@+id/layout_categoria"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="8dp"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -40,27 +41,9 @@
             android:id="@+id/layout_dados"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:orientation="vertical"
             android:visibility="gone">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/menu"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Categoria"
-                android:visibility="visible">
-
-                <AutoCompleteTextView
-                    android:id="@+id/auto_complete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="8dp"
-                    android:inputType="none" />
-
-            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/nome_projeto_text"
@@ -69,20 +52,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
+                android:padding="16dp"
                 android:text="Nenhum projeto selecionado"
                 android:textColor="#888888"
-                android:visibility="visible" />
-
-            <Button
-                android:id="@+id/escolher_projeto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:backgroundTint="@color/botao"
-                android:text="Escolher projeto"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
                 android:visibility="visible" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -164,6 +136,7 @@
             android:id="@+id/layout_foto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:orientation="vertical"
             android:visibility="visible">
 

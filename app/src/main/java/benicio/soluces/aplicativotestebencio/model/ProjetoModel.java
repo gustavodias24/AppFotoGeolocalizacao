@@ -103,8 +103,9 @@ public class ProjetoModel {
         title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
         title.setColor(ContextCompat.getColor(a, R.color.black));
 
-        canvas.drawText(this.nomeProjeto, 212, 173, title);
-        canvas.drawText(preferences.getString("operador", "Nome não informado."), 246, 226, title);
+        canvas.drawText(this.nomeProjeto, 150, 200, title);
+        canvas.drawText(preferences.getString("operador", "Nome não informado."), 180, 269, title);
+
 
         int espacamentoEntrePontos = 25;
         int espacamentoEntreLinhas = 15;
@@ -114,8 +115,8 @@ public class ProjetoModel {
 
         title.setTextSize(10);
 
-        int startX = 94;
-        int startY = 303;
+        int startX = 22;
+        int startY = 407;
 
         for ( PontoModel ponto : this.listaDePontos){
             canvas.drawText(String.format("(%s) - %s - %s", index, ponto.getData(), ponto.getCategoria()), startX, startY, title);

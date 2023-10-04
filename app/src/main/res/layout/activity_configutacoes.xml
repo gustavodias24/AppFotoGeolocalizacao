@@ -90,8 +90,8 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Versão 1.0.0"
+        android:text="Versão 1.0.0 \n\nContato:\n\n contato@sinapsessolutions.com.br\n www.sinapsessolutions.com.br "
         android:textColor="#8C8C8C"
-        android:textSize="24sp" />
+        android:textSize="20sp" />
 
 </LinearLayout></ScrollView>
