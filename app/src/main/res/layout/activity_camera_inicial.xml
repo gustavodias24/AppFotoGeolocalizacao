@@ -13,6 +13,7 @@
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     </androidx.camera.view.PreviewView>
 
     <ImageView
@@ -50,15 +51,17 @@
         app:tint="#fff" />
 
 
-
     <ImageButton
         android:id="@+id/flipcam"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:src="@drawable/camera_flip_outline"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerCrop"
-        android:layout_margin="8dp"
+        android:src="@drawable/camera_flip_outline"
         app:tint="#fff" />
 
     <ImageButton
@@ -99,6 +102,14 @@
         android:textAlignment="viewEnd"
         android:textColor="#fff"
         android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/logoEmpresa"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
 
 </RelativeLayout>

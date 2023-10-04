@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -37,8 +38,11 @@ import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityMapaBinding;
@@ -70,8 +74,8 @@ public class MapaActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferencesNovidade;
     private SharedPreferences.Editor editorNovidade;
 
-    private SharedPreferences preferecesFirts;
-    private SharedPreferences.Editor editorFirts;
+    private SharedPreferences preferecesDate;
+    private SharedPreferences.Editor editorData;
     private int qtdNovidadeNova = 0 ;
     private Retrofit retrofit;
     private ServiceNotificacoes serviceNotificacao;
@@ -83,15 +87,17 @@ public class MapaActivity extends AppCompatActivity {
 
         vbinding.menuOpcoes.open(true);
 
-        preferecesFirts = getSharedPreferences("preferecesFirts", MODE_PRIVATE);
-        editorFirts = preferecesFirts.edit();
+        preferecesDate = getSharedPreferences("preferencesData", MODE_PRIVATE);
+        editorData= preferecesDate.edit();
 
-        if ( preferecesFirts.getBoolean("first", true) ){
+        String diaAtual = new SimpleDateFormat("dd", Locale.getDefault()).format(new Date());
+        Log.d("diaAtual", diaAtual);
+        if ( !diaAtual.equals(preferecesDate.getString("data", "")) ){
             AlertDialog.Builder d = new AlertDialog.Builder(MapaActivity.this);
             d.setTitle("Bem-vindo!");
             d.setCancelable(false);
             d.setMessage("Crie um projeto para inserir pontos no mapa com fotos e observações, se quiser pode exportar o projeto para pdf ou kmz/kml!");
-            d.setPositiveButton("OK", (dialogInterface, i) -> editorFirts.putBoolean("first", false).apply());
+            d.setPositiveButton("OK", (dialogInterface, i) -> editorData.putString("data", diaAtual).apply());
             d.create().show();
 
         }

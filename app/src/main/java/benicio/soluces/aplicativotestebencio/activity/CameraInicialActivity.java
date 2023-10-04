@@ -2,15 +2,19 @@ package benicio.soluces.aplicativotestebencio.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -77,7 +81,7 @@ public class CameraInicialActivity extends AppCompatActivity {
         }
     });
     private ActivityCameraInicialBinding activityBinding;
-
+    private SharedPreferences preferences;
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,8 @@ public class CameraInicialActivity extends AppCompatActivity {
         setContentView(activityBinding.getRoot());
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        preferences = getSharedPreferences("configPreferences", Context.MODE_PRIVATE);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -376,6 +382,14 @@ public class CameraInicialActivity extends AppCompatActivity {
 
     public  void baterPrintDenovo (){
         try {
+
+            if ( preferences.getString("logoImage", null) != null){
+                activityBinding.logoEmpresa.setVisibility(View.VISIBLE);
+                byte[] decodedBytes = Base64.decode(preferences.getString("logoImage", null), Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                activityBinding.logoEmpresa.setImageBitmap(decodedBitmap);
+            }
+
             activityBinding.configs.setVisibility(View.GONE);
             activityBinding.map.setVisibility(View.INVISIBLE);
             activityBinding.flipcam.setVisibility(View.GONE);
@@ -410,6 +424,7 @@ public class CameraInicialActivity extends AppCompatActivity {
             activityBinding.map.setVisibility(View.VISIBLE);
             activityBinding.flipcam.setVisibility(View.VISIBLE);
             activityBinding.capture.setVisibility(View.VISIBLE);
+            activityBinding.logoEmpresa.setVisibility(View.GONE);
             startCamera(cameraFacing);
 
             Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(CameraInicialActivity.this),
