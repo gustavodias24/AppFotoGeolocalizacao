@@ -333,6 +333,13 @@ public class CameraInicialActivity extends AppCompatActivity {
 
         @SuppressLint("DefaultLocale") String cordenadas = String.format("Lat: %f Long: %f", latitude, longitude);
 
+        activityBinding.infos.setText(
+                String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
+                        cordenadas + "\n" +
+                        "Operador: " + operador
+        );
+
+
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
 
@@ -350,11 +357,6 @@ public class CameraInicialActivity extends AppCompatActivity {
                 Log.d("Address", fullAddress);
             } else {
                 Log.d("Address", "No address found");
-                activityBinding.infos.setText(
-                        String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
-                                cordenadas + "\n" +
-                                "Operador: " + operador
-                );
             }
         } catch (IOException e) {
             e.printStackTrace();

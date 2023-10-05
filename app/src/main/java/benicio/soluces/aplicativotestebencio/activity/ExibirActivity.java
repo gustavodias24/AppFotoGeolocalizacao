@@ -170,6 +170,13 @@ public class ExibirActivity extends AppCompatActivity{
 
         @SuppressLint("DefaultLocale") String cordenadas = String.format("Lat: %f Long: %f", latitude, longitude);
 
+        binding.dados.setText(
+                String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
+                        cordenadas + "\n" +
+                        "Operador: " + operador + "\n" +
+                        "Observações: " + obs
+        );
+
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
 
@@ -188,12 +195,6 @@ public class ExibirActivity extends AppCompatActivity{
                 Log.d("Address", fullAddress);
             } else {
                 Log.d("Address", "No address found");
-                binding.dados.setText(
-                        String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
-                                cordenadas + "\n" +
-                                "Operador: " + operador + "\n" +
-                                "Observações: " + obs
-                );
             }
         } catch (IOException e) {
             e.printStackTrace();
