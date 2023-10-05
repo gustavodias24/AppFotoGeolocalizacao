@@ -1,5 +1,11 @@
 package benicio.soluces.aplicativotestebencio.activity;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -7,22 +13,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.adapter.AdapterPostagem;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityNotificacoesBinding;
 import benicio.soluces.aplicativotestebencio.service.ServiceNotificacoes;
 import benicio.soluces.aplicativotestebencio.util.PostagemModel;
-import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -100,6 +98,10 @@ public class NotificacoesActivity extends AppCompatActivity {
                     lista.addAll(response.body());
                     Collections.reverse(lista);
                     adapter.notifyDataSetChanged();
+
+                    if ( lista.size() > 0 ){
+                        notificacoesBinding.avisoEmptyText.setVisibility(View.GONE);
+                    }
                 }else{
                     Log.d("bucetinha",  response.message());
                     Toast.makeText(NotificacoesActivity.this, response.message(), Toast.LENGTH_SHORT).show();

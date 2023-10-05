@@ -188,6 +188,12 @@ public class ExibirActivity extends AppCompatActivity{
                 Log.d("Address", fullAddress);
             } else {
                 Log.d("Address", "No address found");
+                binding.dados.setText(
+                        String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
+                                cordenadas + "\n" +
+                                "Operador: " + operador + "\n" +
+                                "Observações: " + obs
+                );
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -350,6 +350,11 @@ public class CameraInicialActivity extends AppCompatActivity {
                 Log.d("Address", fullAddress);
             } else {
                 Log.d("Address", "No address found");
+                activityBinding.infos.setText(
+                        String.format("%s ás %s", formattedDate, formattedTime) + "\n" +
+                                cordenadas + "\n" +
+                                "Operador: " + operador
+                );
             }
         } catch (IOException e) {
             e.printStackTrace();

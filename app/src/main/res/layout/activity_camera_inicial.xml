@@ -33,7 +33,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Sinapses"
-        android:textColor="#22FFFFFF"
+        android:textColor="#19FFFFFF"
         android:textSize="24sp" />
 
 

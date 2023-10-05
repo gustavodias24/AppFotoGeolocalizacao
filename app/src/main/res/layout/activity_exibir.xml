@@ -71,8 +71,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Sinapses FotoMapa"
-            android:textColor="#22FFFFFF"
+            android:text="Sinapses"
+            android:textColor="#19FFFFFF"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
