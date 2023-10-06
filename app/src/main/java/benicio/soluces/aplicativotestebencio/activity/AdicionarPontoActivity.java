@@ -125,13 +125,22 @@ public class AdicionarPontoActivity extends AppCompatActivity {
             binding.layoutDados.setVisibility(View.VISIBLE);
             binding.layoutFoto.setVisibility(View.VISIBLE);
             binding.verNoMapaBtn.setVisibility(View.VISIBLE);
-            binding.compartilharBtn.setVisibility(View.VISIBLE);
 
             binding.obsField.getEditText().setEnabled(false);
             binding.obsField.getEditText().setText(pontoModel.getObs());
 
             listaDeFotos.addAll(pontoModel.getImages());
             adapterFotos.notifyDataSetChanged();
+
+
+            binding.verNoMapaBtn.setOnClickListener( view -> {
+                Intent i = new Intent(getApplicationContext(), MapaActivity.class);
+                i.putExtra("latPonto", pontoModel.getLatitude());
+                i.putExtra("longPonto", pontoModel.getLongitude());
+                i.putExtra("idProjeto", b.getString("idProjeto"));
+                startActivity(i);
+                finish();
+            });
 
         }
 

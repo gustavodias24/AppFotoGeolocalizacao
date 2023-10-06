@@ -142,8 +142,24 @@ public class MapaActivity extends AppCompatActivity {
             }
         };
 
+        configurarMap();
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            startLocationUpdates();
+            if ( bundle != null){
+                Double latPonto = bundle.getDouble("latPonto", 0);
+                Double longiPonto = bundle.getDouble("longPonto", 0);
+                if ( latPonto != 0 && longiPonto != 0 ){
+                    mapController.setZoom(18.5);
+                    mapController.animateTo( new GeoPoint(latPonto, longiPonto) );
+                    fab_onde_estou.setLabelText("Localizar ponto");
+                    dialogCarregamento.dismiss();
+                }else{
+                    startLocationUpdates();
+                }
+            }
+            else{
+                startLocationUpdates();
+            }
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
         }
@@ -151,7 +167,7 @@ public class MapaActivity extends AppCompatActivity {
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        configurarMap();
+
 
         fab_onde_estou.setOnClickListener(btn -> {
             startLocationUpdates();

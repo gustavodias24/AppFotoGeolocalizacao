@@ -112,24 +112,6 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
 
-            <Button
-                android:id="@+id/compartilhar_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|center_vertical"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:backgroundTint="@color/botao"
-                android:drawableRight="@drawable/baseline_screen_share_24"
-                android:gravity="center|center_vertical"
-                android:rotationX="-4"
-                android:text="Compartilhar ponto "
-                android:textAllCaps="true"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
         </LinearLayout>
 
         <LinearLayout
