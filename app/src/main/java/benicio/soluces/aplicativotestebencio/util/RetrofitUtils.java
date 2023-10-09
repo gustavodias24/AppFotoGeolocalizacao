@@ -8,6 +8,7 @@ import android.content.Context;
 import benicio.soluces.aplicativotestebencio.databinding.LayoutCarregamentoBinding;
 import benicio.soluces.aplicativotestebencio.service.ServiceIngur;
 import benicio.soluces.aplicativotestebencio.service.ServiceNotificacoes;
+import benicio.soluces.aplicativotestebencio.service.ServiceValidationVersion;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -25,6 +26,17 @@ public class RetrofitUtils {
                 .baseUrl("https://api.imgur.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+    }
+
+    public static Retrofit createRetrofitValidationVersion(){
+        return new Retrofit.Builder()
+                .baseUrl("https://validador-foto-mapa.vercel.app/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    public static ServiceValidationVersion createServiceValidationVersion( Retrofit retrofit){
+        return retrofit.create(ServiceValidationVersion.class);
     }
 
     public static ServiceIngur createServiceIngur(Retrofit retrofit){

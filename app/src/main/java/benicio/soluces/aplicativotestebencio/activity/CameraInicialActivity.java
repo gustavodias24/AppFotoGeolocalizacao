@@ -2,6 +2,7 @@ package benicio.soluces.aplicativotestebencio.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,9 +62,16 @@ import java.util.concurrent.Executors;
 
 import benicio.soluces.aplicativotestebencio.R;
 import benicio.soluces.aplicativotestebencio.databinding.ActivityCameraInicialBinding;
+import benicio.soluces.aplicativotestebencio.model.BodyModelValidarion;
+import benicio.soluces.aplicativotestebencio.model.ValidationModel;
+import benicio.soluces.aplicativotestebencio.service.ServiceValidationVersion;
+import benicio.soluces.aplicativotestebencio.util.RetrofitUtils;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class CameraInicialActivity extends AppCompatActivity {
-
+    private static final int VERSION_APP = 1;
+    private ServiceValidationVersion serviceValidationVersion;
     int cameraFacing = CameraSelector.LENS_FACING_BACK;
     private PreviewView previewView;
     private static final int PERMISSIONS_GERAL = 1;
@@ -88,6 +96,8 @@ public class CameraInicialActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         activityBinding = ActivityCameraInicialBinding.inflate(getLayoutInflater());
         setContentView(activityBinding.getRoot());
+
+        serviceValidationVersion = RetrofitUtils.createServiceValidationVersion(RetrofitUtils.createRetrofitValidationVersion());
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
@@ -451,5 +461,37 @@ public class CameraInicialActivity extends AppCompatActivity {
         } catch (Throwable e) {
             Log.d("baterPrintDenovo:",  e.getMessage());
         }
+    }
+
+    public void validarVersion(){
+        serviceValidationVersion.validarVersion(new BodyModelValidarion(VERSION_APP)).enqueue(new retrofit2.Callback<ValidationModel>() {
+            @Override
+            public void onResponse(Call<ValidationModel> call, Response<ValidationModel> response) {
+                if ( response.isSuccessful() ){
+                    ValidationModel validation = response.body();
+                    if( !validation.getSuccess() ){
+                        AlertDialog.Builder b = new AlertDialog.Builder(CameraInicialActivity.this);
+                        b.setTitle("AVISO!");
+                        b.setCancelable(false);
+                        b.setMessage("Seu app está desatualizado, atualize ele na PlayStore antes de usar novamente. Obrigado!");
+                        b.setPositiveButton("OK", (dialogInterface, i) -> {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/")));
+                        });
+                        b.create().show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ValidationModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        validarVersion();
     }
 }
