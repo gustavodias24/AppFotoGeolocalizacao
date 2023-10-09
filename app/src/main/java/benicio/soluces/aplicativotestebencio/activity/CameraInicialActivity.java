@@ -473,9 +473,9 @@ public class CameraInicialActivity extends AppCompatActivity {
                         AlertDialog.Builder b = new AlertDialog.Builder(CameraInicialActivity.this);
                         b.setTitle("AVISO!");
                         b.setCancelable(false);
-                        b.setMessage("Seu app está desatualizado, atualize ele na PlayStore antes de usar novamente. Obrigado!");
+                        b.setMessage("Seu app do FOTO MAPA está desatualizado, atualize ele na PlayStore antes de usar novamente. Obrigado!");
                         b.setPositiveButton("OK", (dialogInterface, i) -> {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/")));
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(validation.getLink())));
                         });
                         b.create().show();
                     }
