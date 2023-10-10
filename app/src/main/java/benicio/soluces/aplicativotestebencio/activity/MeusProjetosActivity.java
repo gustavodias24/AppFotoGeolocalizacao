@@ -1,28 +1,22 @@
 package benicio.soluces.aplicativotestebencio.activity;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import benicio.soluces.aplicativotestebencio.R;
@@ -40,7 +33,6 @@ import benicio.soluces.aplicativotestebencio.databinding.ActivityMeusProjetosBin
 import benicio.soluces.aplicativotestebencio.databinding.LayoutAdicionarProjetoBinding;
 import benicio.soluces.aplicativotestebencio.model.ProjetoModel;
 import benicio.soluces.aplicativotestebencio.util.ProjetoUtils;
-import benicio.soluces.aplicativotestebencio.util.RecyclerItemClickListener;
 
 public class MeusProjetosActivity extends AppCompatActivity {
 
@@ -147,16 +139,26 @@ public class MeusProjetosActivity extends AppCompatActivity {
                         data,
                         new ArrayList<>()
                 );
-                listaProjetoAntiga.add(projetoModel);
 
-                ProjetoUtils.saveList(
-                        listaProjetoAntiga,
-                        getApplicationContext()
-                );
+                if ( listaProjetoAntiga.size() >= 60){
+                    AlertDialog.Builder bAvido = new AlertDialog.Builder(MeusProjetosActivity.this);
+                    bAvido.setTitle("AVISO!");
+                    bAvido.setMessage("Você atingiu a quantidade máxima de projetos na versão grátis, atualize para versão PRO!");
+                    bAvido.setPositiveButton("OK", null);
+                    bAvido.create().show();
+                }else{
+                    listaProjetoAntiga.add(projetoModel);
+
+                    ProjetoUtils.saveList(
+                            listaProjetoAntiga,
+                            getApplicationContext()
+                    );
+                    Toast.makeText(this, "Projeto adicionado!", Toast.LENGTH_SHORT).show();
+                    atualizarLista();
+                    bindingAdicionarProjeto.tituloProjetoField.getEditText().setText("");
+                }
+
                 dialogCriarProjeto.dismiss();
-                Toast.makeText(this, "Projeto adicionado!", Toast.LENGTH_SHORT).show();
-                atualizarLista();
-                bindingAdicionarProjeto.tituloProjetoField.getEditText().setText("");
 
             }else{
                 Toast.makeText(this, "Título e data obrigatórios!", Toast.LENGTH_SHORT).show();

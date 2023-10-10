@@ -19,6 +19,7 @@
         android:id="@+id/logo_img"
         android:layout_width="match_parent"
         android:layout_height="201dp"
+        android:padding="12dp"
         android:src="@raw/logo"
         android:visibility="visible" />
     <com.google.android.material.textfield.TextInputLayout
@@ -84,7 +85,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/text_infos_contato"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

@@ -36,6 +36,11 @@ public class ConfigutacoesActivity extends AppCompatActivity {
         preferences = getSharedPreferences("configPreferences", Context.MODE_PRIVATE);
         editor = preferences.edit();
 
+
+        binding.textInfosContato.setOnClickListener( view -> {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.sinapsessolutions.com.br")));
+        });
+
         operador = preferences.getString("operador", "");
 
         binding.nomeOperadorField.getEditText().setText(operador);

@@ -206,6 +206,10 @@ public class CameraInicialActivity extends AppCompatActivity {
         activityBinding.flipcam.setVisibility(View.GONE);
         activityBinding.capture.setVisibility(View.GONE);
 
+        activityBinding.infos.setVisibility(View.GONE);
+        activityBinding.infosPrint.setVisibility(View.VISIBLE);
+        activityBinding.infosPrint.setText(activityBinding.infos.getText().toString());
+
         activityBinding.imagePreview.setVisibility(View.VISIBLE);
 
         File documentosDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
@@ -267,6 +271,11 @@ public class CameraInicialActivity extends AppCompatActivity {
                                 activityBinding.map.setVisibility(View.VISIBLE);
                                 activityBinding.flipcam.setVisibility(View.VISIBLE);
                                 activityBinding.capture.setVisibility(View.VISIBLE);
+
+                                activityBinding.infos.setVisibility(View.VISIBLE);
+                                activityBinding.infosPrint.setVisibility(View.GONE);
+                                activityBinding.infosPrint.setText(activityBinding.infos.getText().toString());
+
                                 startCamera(cameraFacing);
                                 baterPrintDenovo();
                             } catch (Throwable e) {
@@ -412,6 +421,10 @@ public class CameraInicialActivity extends AppCompatActivity {
             activityBinding.flipcam.setVisibility(View.GONE);
             activityBinding.capture.setVisibility(View.GONE);
 
+            activityBinding.infos.setVisibility(View.GONE);
+            activityBinding.infosPrint.setVisibility(View.VISIBLE);
+            activityBinding.infosPrint.setText(activityBinding.infos.getText().toString());
+
             // create bitmap screen capture
             View v1 = getWindow().getDecorView().getRootView().findViewById(R.id.maconha);
             v1.setDrawingCacheEnabled(true);
@@ -442,6 +455,10 @@ public class CameraInicialActivity extends AppCompatActivity {
             activityBinding.flipcam.setVisibility(View.VISIBLE);
             activityBinding.capture.setVisibility(View.VISIBLE);
             activityBinding.logoEmpresa.setVisibility(View.GONE);
+
+            activityBinding.infos.setVisibility(View.VISIBLE);
+            activityBinding.infosPrint.setVisibility(View.GONE);
+            activityBinding.infosPrint.setText(activityBinding.infos.getText().toString());
             startCamera(cameraFacing);
 
             Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(CameraInicialActivity.this),

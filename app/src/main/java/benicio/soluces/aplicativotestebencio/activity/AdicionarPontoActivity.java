@@ -218,11 +218,20 @@ public class AdicionarPontoActivity extends AppCompatActivity {
                 listaAntiga.remove(pos);
                 listaAntiga.add(pos, projetoModel);
 
-                ProjetoUtils.saveList(listaAntiga, getApplicationContext());
+                if ( listaAntiga.size() >= 60){
+                    AlertDialog.Builder bAvido = new AlertDialog.Builder(AdicionarPontoActivity.this);
+                    bAvido.setTitle("AVISO!");
+                    bAvido.setMessage("Você atingiu a quantidade máxima de pontos na versão grátis, atualize para versão PRO!");
+                    bAvido.setPositiveButton("OK", null);
+                    bAvido.create().show();
+                }else{
+                    ProjetoUtils.saveList(listaAntiga, getApplicationContext());
 
-                Toast.makeText(this, "Ponto adicionado com sucesso!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Ponto adicionado com sucesso!", Toast.LENGTH_SHORT).show();
 
-                irParaOmapaActivity();
+                    irParaOmapaActivity();
+                }
+
             }else{
                 Toast.makeText(this, "Escolha um projeto para esse ponto!", Toast.LENGTH_SHORT).show();
             }

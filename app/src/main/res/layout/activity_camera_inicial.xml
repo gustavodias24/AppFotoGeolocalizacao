@@ -37,19 +37,17 @@
         android:textSize="24sp" />
 
 
-
     <ImageButton
+        android:id="@+id/capture"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="40sp"
-        android:id="@+id/capture"
-        android:src="@drawable/baseline_add_a_photo_24_mini"
-        android:scaleType="centerCrop"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerCrop"
+        android:src="@drawable/baseline_add_a_photo_24_mini"
         app:tint="#fff" />
-
 
     <ImageButton
         android:id="@+id/flipcam"
@@ -76,11 +74,12 @@
         android:scaleType="centerCrop"
         android:src="@drawable/settingd_icon"
         app:tint="#fff" />
+
     <ImageButton
         android:id="@+id/map"
-        android:layout_alignParentRight="true"
         android:layout_width="60sp"
         android:layout_height="60sp"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -88,6 +87,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerCrop"
         android:src="@drawable/map_marker_account"
+        android:visibility="visible"
         app:tint="#fff" />
 
     <TextView
@@ -101,7 +101,23 @@
         android:text="Carregando..."
         android:textAlignment="viewEnd"
         android:textColor="#fff"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/infosPrint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8sp"
+        android:layout_marginBottom="8dp"
+        android:text="null"
+        android:textAlignment="viewEnd"
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/logoEmpresa"
