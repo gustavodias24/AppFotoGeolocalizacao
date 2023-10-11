@@ -53,7 +53,7 @@ public class ConfigutacoesActivity extends AppCompatActivity {
         }
 
         binding.tutorialBtn.setOnClickListener( tutorialView -> {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=n79nS_xtlI4")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.sinapsessolutions.com.br/tutorial/Fotomapa")));
         });
 
         binding.logoBtn.setOnClickListener( logoView ->{

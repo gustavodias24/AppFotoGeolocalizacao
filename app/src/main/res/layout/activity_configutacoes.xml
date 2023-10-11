@@ -36,53 +36,64 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/logo_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/botao"
         android:drawableRight="@drawable/baseline_insert_photo_24"
-        android:rotationX="-4"
-        android:text="Escolher logo"
+        android:text="Logo"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
 
     <Button
         android:id="@+id/salvar_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_gravity="center"
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/botao"
         android:drawableRight="@drawable/baseline_save_24"
-        android:rotationX="-4"
+        android:padding="16dp"
         android:text="Salvar"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
 
 
     <Button
         android:id="@+id/tutorial_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_gravity="center|center_vertical"
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/botao"
         android:drawableRight="@drawable/baseline_live_help_24"
         android:gravity="center|center_vertical"
-        android:rotationX="-4"
-        android:text="tutorial"
+        android:padding="16dp"
+        android:text="ajuda"
         android:textAllCaps="true"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="12sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/outras_infos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Versão 1.0.0\n\n contato@𝙨𝙞𝙣𝙖𝙥𝙨𝙚𝙨solutions.com.br"
+        android:textColor="#8E8D8D"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/text_infos_contato"
@@ -91,8 +102,8 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Versão 1.0.0 \n\nContato:\n\n contato@sinapsessolutions.com.br\n www.sinapsessolutions.com.br "
-        android:textColor="#8C8C8C"
+        android:text="www.sinapsessolutions.com.br "
+        android:textColor="#2196F3"
         android:textSize="20sp" />
 
 </LinearLayout></ScrollView>
